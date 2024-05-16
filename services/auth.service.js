@@ -1,0 +1,156 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const User = require("../models/user.model");
+const OTP = require("../models/OTP.model");
+
+const { existingUser } = require("./user.service");
+const { sendResetLink, sendEmailVerificationOTP } = require("./email.service");
+const {
+  newError,
+  generateOTP,
+  generateReferralCode,
+  capitalizeName,
+} = require("../utils");
+
+const createUserAccount = async (
+  country,
+  email,
+  password,
+  name,
+  userName,
+  phoneNumber,
+  isEmailVerified
+) => {
+  try {
+    const isUsernameExisting = await User.findOne({ userName });
+
+    if (isUsernameExisting) {
+      return newError("Username already exist", 400);
+    }
+
+    const generatedReferralCode = generateReferralCode();
+    const user = await User.create({
+      country: country,
+      email: email,
+      password: password,
+      name: capitalizeName(name),
+      userName: userName,
+      phoneNumber: phoneNumber,
+      referralCode: generatedReferralCode,
+      isEmailVerified,
+    });
+
+    return user;
+  } catch (error) {
+    console.log(error);
+    return newError("Server Error, try again later", 500);
+  }
+};
+
+const loginUser = async (name, password) => {
+  try {
+    const user = await existingUser({ name: capitalizeName(name) });
+
+    if (!user) {
+      return newError("User doesn't exist", 404);
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return newError("Invalid credentials", 400);
+    }
+
+    const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_TOKEN_EXPIRES,
+    });
+
+    return { user, token };
+  } catch (error) {
+    return newError(error.message, 500);
+  }
+};
+
+const sendCodeToEmail = async (email) => {
+  try {
+    const generatedOTP = generateOTP();
+    await sendEmailVerificationOTP(email, generatedOTP);
+
+    const validOTP = await OTP.findOne({ OTP });
+
+    if (validOTP) {
+      await OTP.findOneAndUpdate({ OTP: validOTP.OTP }, { OTP: generatedOTP });
+      return;
+    }
+
+    await OTP.create({
+      OTP: generatedOTP,
+    });
+  } catch (error) {
+    return newError(error.message, 500);
+  }
+};
+
+const verifyCodeFromEmail = async (oneTimePassword) => {
+  try {
+    const validOTP = await OTP.findOne({ OTP: oneTimePassword });
+
+    if (!validOTP) {
+      return newError("Invalid OTP", 404);
+    }
+
+    const OTPdocument = await OTP.findOneAndDelete({ OTP: oneTimePassword });
+
+    if (OTPdocument) {
+      const check = await OTP.findOne({ OTP: oneTimePassword });
+      if (check) {
+        newError("OTP was not successfully verified");
+      }
+    }
+  } catch (error) {
+    return newError(error.message, 500);
+  }
+};
+
+const forgetUserPassword = async (email) => {
+  try {
+    const user = await existingUser({ email: email });
+
+    if (!user) {
+      return newError("User does not exist", 404);
+    }
+
+    const token = jwt.sign(
+      { id: user._id, name: user.name },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: 20 * 60,
+      }
+    );
+
+    // CHANGE URL AFTER DEPLOYMENT LATER
+    const link = `${process.env.SERVER_URL}/api/auth/verify-mail-password-reset/${token}`;
+    await sendResetLink(email, user.name, link);
+  } catch (error) {
+    return newError(error.message, error.status);
+  }
+};
+
+const updateUserAccount = async (id, payload) => {
+  try {
+    await User.findOneAndUpdate(id, payload, { new: true });
+  } catch (error) {
+    console.log(error);
+    return newError("Connection timed out", 500);
+  }
+};
+
+module.exports = {
+  createUserAccount,
+  loginUser,
+  updateUserAccount,
+  forgetUserPassword,
+  sendCodeToEmail,
+  verifyCodeFromEmail,
+};
