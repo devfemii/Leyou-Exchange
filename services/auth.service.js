@@ -1,10 +1,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 const User = require("../models/user.model");
 const OTP = require("../models/OTP.model");
 
-const { existingUser } = require("./user.service");
+const { existingUser, updateUserAccount } = require("./user.service");
 const { sendResetLink, sendEmailVerificationOTP } = require("./email.service");
 const {
   newError,
@@ -12,6 +13,8 @@ const {
   generateReferralCode,
   capitalizeName,
 } = require("../utils");
+
+dotenv.config();
 
 const createUserAccount = async (
   country,
@@ -23,7 +26,7 @@ const createUserAccount = async (
   isEmailVerified
 ) => {
   try {
-    const isUsernameExisting = await User.findOne({ userName });
+    const isUsernameExisting = await existingUser({ userName });
 
     if (isUsernameExisting) {
       return newError("Username already exist", 400);
@@ -77,7 +80,7 @@ const sendCodeToEmail = async (email) => {
     const generatedOTP = generateOTP();
     await sendEmailVerificationOTP(email, generatedOTP);
 
-    const validOTP = await OTP.findOne({ OTP });
+    const validOTP = await OTP.findOne({ email });
 
     if (validOTP) {
       await OTP.findOneAndUpdate({ OTP: validOTP.OTP }, { OTP: generatedOTP });
@@ -129,7 +132,6 @@ const forgetUserPassword = async (email) => {
       }
     );
 
-    // CHANGE URL AFTER DEPLOYMENT LATER
     const link = `${process.env.SERVER_URL}/api/auth/verify-mail-password-reset/${token}`;
     await sendResetLink(email, user.name, link);
   } catch (error) {
@@ -137,20 +139,52 @@ const forgetUserPassword = async (email) => {
   }
 };
 
-const updateUserAccount = async (id, payload) => {
+const updateUserPassword = async (id, password) => {
   try {
-    await User.findOneAndUpdate(id, payload, { new: true });
+    const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT));
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await existingUser({ _id: id });
+    if (!user.canResetPassword) {
+      return newError("You need to verify email before resetting password!");
+    }
+
+    await updateUserAccount(
+      {
+        _id: id,
+      },
+      { password: hashedPassword, canResetPassword: false }
+    );
   } catch (error) {
     console.log(error);
-    return newError("Connection timed out", 500);
+    return newError(error.message, 500);
+  }
+};
+
+const verifiedEmailForPasswordReset = async (token) => {
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    await updateUserAccount({ _id: payload.id }, { canResetPassword: true });
+
+    // REDIRECT TO THE CLIENT URL AND ENCODE THE ID
+    // res
+    // .status(StatusCodes.PERMANENT_REDIRECT)
+    // .redirect(
+    //   `${process.env.CLIENT_URL}/reset-password/?email=${encodeURIComponent(
+    //     user.email
+    //   )}`
+    // );
+  } catch (error) {
+    return newError(error.message, error.status);
   }
 };
 
 module.exports = {
   createUserAccount,
   loginUser,
-  updateUserAccount,
   forgetUserPassword,
   sendCodeToEmail,
   verifyCodeFromEmail,
+  verifiedEmailForPasswordReset,
+  updateUserPassword,
 };

@@ -2,10 +2,13 @@ const {
   createUserAccount,
   forgetUserPassword,
   loginUser,
-  updateUserAccount,
   sendCodeToEmail,
   verifyCodeFromEmail,
+  verifiedEmailForPasswordReset,
+  updateUserPassword,
 } = require("../services/auth.service");
+
+const { updateUserAccount } = require("../services/user.service");
 
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 
@@ -82,14 +85,9 @@ const forgetPassword = async (req, res) => {
 
   try {
     await forgetUserPassword(email);
-
-    return res.status(201).json(
-      sendSuccessMessage(
-        "Reset link sent successfully",
-
-        200
-      )
-    );
+    return res
+      .status(201)
+      .json(sendSuccessMessage("Reset link sent successfully", 200));
   } catch (error) {
     return res
       .status(error.status)
@@ -137,52 +135,45 @@ const verifyCode = async (req, res) => {
   }
 };
 
-// const verifiedEmailPasswordReset = async (req, res) => {
-//     try {
-//       const token = req.params.signature;
-//       const payload = jwt.verify(token, process.env.JWT_SECRET);
-//       const user = await User.findOneAndUpdate(
-//         { _id: payload.id },
-//         { canResetPassword: true }
-//       );
-//       //Redirect to a client page that can display the email
-//       //and prompt the user for thier new password
-//       res
-//         .status(StatusCodes.PERMANENT_REDIRECT)
-//         .redirect(
-//           `${process.env.CLIENT_URL}/reset-password/?email=${encodeURIComponent(
-//             user.email
-//           )}`
-//         );
-//     } catch (error) {
-//       console.error(error);
-//       res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-//     }
-//   };
+const verifiedEmailPasswordReset = async (req, res) => {
+  try {
+    const token = req.params.signature;
+    await verifiedEmailForPasswordReset(token);
 
-//   const updatePassword = async (req, res) => {
-//     try {
-//       const salt = await bcrypt.genSalt(10);
-//       const hashedPassword = await bcrypt.hash(req.body.password, salt);
-//       const user = await User.findOne({ email: req.body.email });
-//       if (!user.canResetPassword) {
-//         throw new BadRequest(
-//           "You need to verify email before resetting password!"
-//         );
-//       }
-//       const edited = await User.findOneAndUpdate(
-//         {
-//           email: req.body.email,
-//         },
-//         { password: hashedPassword, canResetPassword: false },
-//         { new: true, runValidators: true }
-//       );
-//       res.json({ message: "Password Reset Successful" });
-//     } catch (error) {
-//       console.error(error);
-//       res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-//     }
-//   };
+    res
+      .status(200)
+      .json(
+        sendSuccessMessage(
+          "your email is successfully verified, return to the app and proceed to reset your password",
+          200
+        )
+      );
+  } catch (error) {
+    return res
+      .status(error.status)
+      .json(sendErrorMessage(error.message, error.status));
+  }
+};
+
+const updatePassword = async (req, res) => {
+  const { id, password } = req.body;
+  try {
+    await updateUserPassword(id, password);
+
+    res
+      .status(200)
+      .json(
+        sendSuccessMessage(
+          "you have successfully updated your password, proceed to login",
+          200
+        )
+      );
+  } catch (error) {
+    return res
+      .status(error.status)
+      .json(sendErrorMessage(error.message, error.status));
+  }
+};
 
 const createTransactionPin = async (req, res) => {
   const { userId, transactionPin } = req.body;
@@ -196,7 +187,6 @@ const createTransactionPin = async (req, res) => {
       .status(201)
       .json(sendSuccessMessage("Pin created successfully", 201));
   } catch (error) {
-    console.log(error);
     return res
       .status(error.status)
       .json(sendErrorMessage(error.message, error.status));
@@ -206,7 +196,10 @@ const createTransactionPin = async (req, res) => {
 module.exports = {
   register,
   createTransactionPin,
+  verifiedEmailPasswordReset,
   forgetPassword,
+  updatePassword,
+  updatePassword,
   sendCode,
   verifyCode,
   login,

@@ -6,18 +6,25 @@ const {
   verifyCode,
   login,
   forgetPassword,
+  verifiedEmailPasswordReset,
+  updatePassword,
 } = require("../controllers/auth.controller");
 
 const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/forget-password", forgetPassword);
 
-router.post("/send-code", sendCode);
-router.post("/verify-code", verifyCode);
+router.post("/password/forget", forgetPassword);
+router.get(
+  "/verify-mail-password-reset/:signature",
+  verifiedEmailPasswordReset
+);
+router.post("/password/reset", updatePassword);
 
-router.get("/verified-mail-password-reset/:signature");
+router.post("/code/send", sendCode);
+router.post("/code/verify", verifyCode);
+
 router.patch("/create/transaction-pin", createTransactionPin);
 
 module.exports = router;

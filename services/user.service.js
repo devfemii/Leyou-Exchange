@@ -10,6 +10,16 @@ const existingUser = async (id) => {
   }
 };
 
+const updateUserAccount = async (id, payload) => {
+  try {
+    await User.findOneAndUpdate(id, payload, { new: true });
+  } catch (error) {
+    console.log(error);
+    return newError("Connection timed out", 500);
+  }
+};
+
 module.exports = {
   existingUser,
+  updateUserAccount,
 };
