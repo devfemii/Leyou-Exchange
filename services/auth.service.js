@@ -27,6 +27,11 @@ const createUserAccount = async (
 ) => {
   try {
     const isUsernameExisting = await existingUser({ userName });
+    const isEmailExisting = await existingUser({ email });
+
+    if (isEmailExisting) {
+      return newError("Email already exist", 400);
+    }
 
     if (isUsernameExisting) {
       return newError("Username already exist", 400);
@@ -46,8 +51,7 @@ const createUserAccount = async (
 
     return user;
   } catch (error) {
-    console.log(error);
-    return newError("Server Error, try again later", 500);
+    return newError(error.message, error.status);
   }
 };
 
@@ -71,7 +75,7 @@ const loginUser = async (name, password) => {
 
     return { user, token };
   } catch (error) {
-    return newError(error.message, 500);
+    return newError(error.message, error.status);
   }
 };
 
