@@ -66,6 +66,10 @@ function capitalizeName(name) {
     .join(" ");
 }
 
+function changeCasingToLowercase(name) {
+  return name.toLowerCase();
+}
+
 module.exports = {
   sendErrorMessage,
   sendSuccessMessage,
@@ -73,4 +77,5 @@ module.exports = {
   generateOTP,
   generateReferralCode,
   capitalizeName,
+  changeCasingToLowercase,
 };

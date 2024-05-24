@@ -12,6 +12,7 @@ const {
   generateOTP,
   generateReferralCode,
   capitalizeName,
+  changeCasingToLowercase,
 } = require("../utils");
 
 dotenv.config();
@@ -43,7 +44,7 @@ const createUserAccount = async (
       email: email,
       password: password,
       name: capitalizeName(name),
-      userName: userName,
+      userName: changeCasingToLowercase(userName),
       phoneNumber: phoneNumber,
       referralCode: generatedReferralCode,
       isEmailVerified,
