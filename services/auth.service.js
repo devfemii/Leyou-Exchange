@@ -44,7 +44,7 @@ const createUserAccount = async (
       email: email,
       password: password,
       name: capitalizeName(name),
-      userName: changeCasingToLowercase(userName),
+      userName: userName,
       phoneNumber: phoneNumber,
       referralCode: generatedReferralCode,
       isEmailVerified,
@@ -56,9 +56,9 @@ const createUserAccount = async (
   }
 };
 
-const loginUser = async (name, password) => {
+const loginUser = async (userName, password) => {
   try {
-    const user = await existingUser({ name: capitalizeName(name) });
+    const user = await existingUser({ userName });
 
     if (!user) {
       return newError("User doesn't exist", 404);

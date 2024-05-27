@@ -52,10 +52,10 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { name, password } = req.body;
+  const { userName, password } = req.body;
 
   try {
-    const response = await loginUser(name, password);
+    const response = await loginUser(userName, password);
 
     return res.status(200).json(
       sendSuccessMessage(
