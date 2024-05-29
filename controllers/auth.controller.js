@@ -13,15 +13,7 @@ const { updateUserAccount } = require("../services/user.service");
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 
 const register = async (req, res) => {
-  const {
-    country,
-    email,
-    name,
-    userName,
-    phoneNumber,
-    isEmailVerified,
-    password,
-  } = req.body;
+  const { country, email, name, userName, phoneNumber, password } = req.body;
 
   try {
     const user = await createUserAccount(
@@ -30,8 +22,7 @@ const register = async (req, res) => {
       password,
       name,
       userName,
-      phoneNumber,
-      isEmailVerified
+      phoneNumber
     );
 
     return res.status(201).json(
@@ -47,7 +38,7 @@ const register = async (req, res) => {
   } catch (error) {
     return res
       .status(error.status)
-      .json(sendErrorMessage(error.message, error.status));
+      .json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 

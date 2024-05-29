@@ -33,6 +33,10 @@ const UserSchema = new mongoose.Schema({
     default: null,
     required: true,
   },
+  isBalanceVisible: {
+    type: Boolean,
+    default: false,
+  },
   referralCode: {
     type: String,
     default: null,

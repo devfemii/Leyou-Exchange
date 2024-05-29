@@ -70,6 +70,11 @@ function changeCasingToLowercase(name) {
   return name.toLowerCase();
 }
 
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(String(email).toLowerCase());
+}
+
 module.exports = {
   sendErrorMessage,
   sendSuccessMessage,
@@ -78,4 +83,5 @@ module.exports = {
   generateReferralCode,
   capitalizeName,
   changeCasingToLowercase,
+  validateEmail,
 };

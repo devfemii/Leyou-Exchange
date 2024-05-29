@@ -8,6 +8,8 @@ const port = process.env.PORT || 3000;
 
 // import application routes
 const authRouter = require("./routes/auth.routes");
+const notificationRouter = require("./routes/notification.routes");
+const userRouter = require("./routes/user.routes");
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
 app.use("/api/auth", authRouter);
+app.use("/api/notifications", notificationRouter);
+app.use("/api/user", userRouter);
 
 app.listen(port, () => {
   console.log("attempting to connect to our database server...");

@@ -13,6 +13,7 @@ const {
   generateReferralCode,
   capitalizeName,
   changeCasingToLowercase,
+  validateEmail,
 } = require("../utils");
 
 dotenv.config();
@@ -23,8 +24,7 @@ const createUserAccount = async (
   password,
   name,
   userName,
-  phoneNumber,
-  isEmailVerified
+  phoneNumber
 ) => {
   try {
     const isUsernameExisting = await existingUser({ userName });
@@ -39,6 +39,13 @@ const createUserAccount = async (
     }
 
     const generatedReferralCode = generateReferralCode();
+
+    const validatedMail = validateEmail(email);
+
+    if (!validatedMail) {
+      return newError("Invalid email, try again", 400);
+    }
+
     const user = await User.create({
       country: country,
       email: email,
@@ -47,12 +54,11 @@ const createUserAccount = async (
       userName: userName,
       phoneNumber: phoneNumber,
       referralCode: generatedReferralCode,
-      isEmailVerified,
     });
 
     return user;
   } catch (error) {
-    return newError(error.message, error.status);
+    return newError(error.message, error.status ?? 500);
   }
 };
 
@@ -70,7 +76,7 @@ const loginUser = async (userName, password) => {
       return newError("Invalid credentials", 400);
     }
 
-    const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_TOKEN_EXPIRES,
     });
 
