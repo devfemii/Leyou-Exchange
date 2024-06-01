@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 let bcryptSalt = process.env.BCRYPT_SALT;
 const UserSchema = new mongoose.Schema({
-  country: {
+  tradeWith: {
     type: String,
     default: null,
     required: true,
@@ -50,6 +50,20 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  notifications: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "notification",
+      default: [],
+    },
+  ],
+  transactions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "transaction",
+      default: [],
+    },
+  ],
   canResetPassword: {
     type: Boolean,
     default: false,

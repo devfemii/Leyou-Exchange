@@ -5,8 +5,8 @@ const dotenv = require("dotenv");
 const User = require("../models/user.model");
 const OTP = require("../models/OTP.model");
 
-const { existingUser, updateUserAccount } = require("./user.service");
-const { sendResetLink, sendEmailVerificationOTP } = require("./email.service");
+const { existingUser, updateUserAccount } = require("./user.services");
+const { sendResetLink, sendEmailVerificationOTP } = require("./email.services");
 const {
   newError,
   generateOTP,

@@ -1,4 +1,7 @@
-const { updateUserAccount, existingUser } = require("../services/user.service");
+const {
+  updateUserAccount,
+  existingUser,
+} = require("../services/user.services");
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 
 const toggleBalanceVisibility = async (req, res) => {

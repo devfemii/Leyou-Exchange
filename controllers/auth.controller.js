@@ -6,9 +6,9 @@ const {
   verifyCodeFromEmail,
   verifiedEmailForPasswordReset,
   updateUserPassword,
-} = require("../services/auth.service");
+} = require("../services/auth.services");
 
-const { updateUserAccount } = require("../services/user.service");
+const { updateUserAccount } = require("../services/user.services");
 
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 

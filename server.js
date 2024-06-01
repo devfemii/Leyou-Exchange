@@ -10,6 +10,7 @@ const port = process.env.PORT || 3000;
 const authRouter = require("./routes/auth.routes");
 const notificationRouter = require("./routes/notification.routes");
 const userRouter = require("./routes/user.routes");
+const transactionRouter = require("./routes/transaction.routes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cors());
 app.use("/api/auth", authRouter);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/user", userRouter);
+app.use("/api/transactions", transactionRouter);
 
 app.listen(port, () => {
   console.log("attempting to connect to our database server...");
