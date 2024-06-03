@@ -13,11 +13,11 @@ const { updateUserAccount } = require("../services/user.services");
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 
 const register = async (req, res) => {
-  const { country, email, name, userName, phoneNumber, password } = req.body;
+  const { tradeWith, email, name, userName, phoneNumber, password } = req.body;
 
   try {
     const user = await createUserAccount(
-      country,
+      tradeWith,
       email,
       password,
       name,
@@ -54,7 +54,7 @@ const login = async (req, res) => {
           userDetails: {
             name: response.user.name,
             email: response.user.email,
-            country: response.user.country,
+            tradeWith: response.user.tradeWith,
             username: response.user.username,
             phoneNumber: response.user.phoneNumber,
             referralCode: response.user.referralCode,

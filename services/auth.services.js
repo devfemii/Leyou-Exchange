@@ -19,7 +19,7 @@ const {
 dotenv.config();
 
 const createUserAccount = async (
-  country,
+  tradeWith,
   email,
   password,
   name,
@@ -47,7 +47,7 @@ const createUserAccount = async (
     }
 
     const user = await User.create({
-      country: country,
+      tradeWith: tradeWith,
       email: email,
       password: password,
       name: capitalizeName(name),
