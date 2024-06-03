@@ -1,6 +1,6 @@
 const {
   getNotificationsByUserId,
-} = require("../services/notification.services");
+} = require("../services/notification.service");
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 
 const getNotifications = async (req, res) => {

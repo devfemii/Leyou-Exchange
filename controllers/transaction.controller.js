@@ -1,4 +1,4 @@
-const { saveTransaction } = require("../services/transaction.services");
+const { saveTransaction } = require("../services/transaction.service");
 const { sendSuccessMessage, sendErrorMessage } = require("../utils");
 
 const tradeGiftCard = async (req, res) => {

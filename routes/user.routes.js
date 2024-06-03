@@ -1,5 +1,8 @@
 const express = require("express");
-const { toggleBalanceVisibility } = require("../controllers/user.controller");
+const {
+  toggleBalanceVisibility,
+  getGiftCards,
+} = require("../controllers/user.controller");
 
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
@@ -9,5 +12,7 @@ router.patch(
   authMiddleware,
   toggleBalanceVisibility
 );
+
+router.get("/giftcards", authMiddleware, getGiftCards);
 
 module.exports = router;
