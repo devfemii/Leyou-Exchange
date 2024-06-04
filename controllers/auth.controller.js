@@ -55,7 +55,7 @@ const login = async (req, res) => {
             name: response.user.name,
             email: response.user.email,
             tradeWith: response.user.tradeWith,
-            username: response.user.userName,
+            userName: response.user.userName,
             phoneNumber: response.user.phoneNumber,
             referralCode: response.user.referralCode,
           },
