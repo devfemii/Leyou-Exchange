@@ -1,7 +1,12 @@
 const Transaction = require("../models/transaction.model");
+const User = require("../models/user.model");
+
+const { updateUserAccount, existingUser } = require("../services/user.service");
+
 const { newError } = require("../utils");
 
 const saveTransaction = async (
+  userId,
   giftCardCategory,
   giftCardSubCategory,
   giftCardAmount,
@@ -20,7 +25,7 @@ const saveTransaction = async (
   }
 
   try {
-    await Transaction.create({
+    const transaction = await Transaction.create({
       giftCardCategory,
       giftCardSubCategory,
       giftCardAmount,
@@ -28,6 +33,31 @@ const saveTransaction = async (
       comment,
       giftCards,
     });
+
+    await updateUserAccount(
+      { _id: userId },
+      {
+        $push: {
+          transactionHistory: {
+            transaction: transaction._id,
+            status: "processing",
+            tag: "sell_gift_card",
+          },
+        },
+      }
+    );
+  } catch (error) {
+    return newError(error.message, error.status);
+  }
+};
+
+const getTransactionHistory = async (userId) => {
+  try {
+    const transactions = await User.findOne({ _id: userId }).populate(
+      "transactionHistory.transaction"
+    );
+
+    return transactions;
   } catch (error) {
     return newError(error.message, error.status);
   }
@@ -35,4 +65,5 @@ const saveTransaction = async (
 
 module.exports = {
   saveTransaction,
+  getTransactionHistory,
 };

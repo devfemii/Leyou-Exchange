@@ -15,8 +15,7 @@ const updateUserAccount = async (id, payload) => {
     const updatedUser = await User.findOneAndUpdate(id, payload, { new: true });
     return updatedUser;
   } catch (error) {
-    console.log(error);
-    return newError("Connection timed out", 500);
+    return newError(error.message, 500);
   }
 };
 

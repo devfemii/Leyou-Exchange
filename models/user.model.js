@@ -2,6 +2,24 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 let bcryptSalt = process.env.BCRYPT_SALT;
+
+// schema for transaction history
+const transactionSchema = new mongoose.Schema({
+  transaction: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "transaction",
+    default: null,
+  },
+  status: {
+    type: String,
+    default: null,
+  },
+  tag: {
+    type: String,
+    default: null,
+  },
+});
+
 const UserSchema = new mongoose.Schema({
   tradeWith: {
     type: String,
@@ -57,13 +75,7 @@ const UserSchema = new mongoose.Schema({
       default: [],
     },
   ],
-  transactions: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "transaction",
-      default: [],
-    },
-  ],
+  transactionHistory: [transactionSchema],
   canResetPassword: {
     type: Boolean,
     default: false,
