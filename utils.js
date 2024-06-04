@@ -75,6 +75,8 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
+function convertToTradedCurrency() {}
+
 module.exports = {
   sendErrorMessage,
   sendSuccessMessage,
