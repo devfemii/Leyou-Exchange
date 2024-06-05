@@ -1,5 +1,8 @@
+const http = require("http");
 const express = require("express");
 const cors = require("cors");
+const socketio = require("socket.io");
+
 const dotenv = require("dotenv");
 require("./config/db.config");
 
@@ -13,6 +16,8 @@ const userRouter = require("./routes/user.routes");
 const transactionRouter = require("./routes/transaction.routes");
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
 
 // parsing incoming data
 app.use(express.json({ limit: "50mb" }));
@@ -25,8 +30,8 @@ app.use("/api/notifications", notificationRouter);
 app.use("/api/user", userRouter);
 app.use("/api/transactions", transactionRouter);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("attempting to connect to our database server...");
 });
 
-module.exports = app;
+module.exports = io;
