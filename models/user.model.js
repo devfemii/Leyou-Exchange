@@ -21,6 +21,10 @@ const transactionSchema = new mongoose.Schema({
 });
 
 const UserSchema = new mongoose.Schema({
+  socketId: {
+    type: String,
+    default: null,
+  },
   tradeWith: {
     type: String,
     default: null,
