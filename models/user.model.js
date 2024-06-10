@@ -4,10 +4,22 @@ const bcrypt = require("bcrypt");
 let bcryptSalt = process.env.BCRYPT_SALT;
 
 // schema for transaction history
-const transactionSchema = new mongoose.Schema({
+const WalletTransactionSchema = new mongoose.Schema({
   transaction: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "transaction",
+    ref: "wallet_transaction",
+    default: null,
+  },
+  tag: {
+    type: String,
+    default: null,
+  },
+});
+
+const GiftcardTransactionSchema = new mongoose.Schema({
+  transaction: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "giftcard_transaction",
     default: null,
   },
   status: {
@@ -79,7 +91,8 @@ const UserSchema = new mongoose.Schema({
       default: [],
     },
   ],
-  transactionHistory: [transactionSchema],
+  giftCardTransactionHistory: [GiftcardTransactionSchema],
+  walletTransactionHistory: [WalletTransactionSchema],
   canResetPassword: {
     type: Boolean,
     default: false,

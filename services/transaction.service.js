@@ -1,4 +1,4 @@
-const Transaction = require("../models/transaction.model");
+const { GiftCardTransactionModel } = require("../models/transaction.model");
 const User = require("../models/user.model");
 
 const { updateUserAccount, existingUser } = require("../services/user.service");
@@ -25,7 +25,7 @@ const saveTransaction = async (
   }
 
   try {
-    const transaction = await Transaction.create({
+    const transaction = await GiftCardTransactionModel.create({
       giftCardCategory,
       giftCardSubCategory,
       giftCardAmount,

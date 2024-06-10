@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const TransactionSchema = new mongoose.Schema(
+const GiftcardTransactionSchema = new mongoose.Schema(
   {
     giftCardCategory: {
       type: String,
@@ -38,5 +38,49 @@ const TransactionSchema = new mongoose.Schema(
   }
 );
 
-const Transaction = mongoose.model("transaction", TransactionSchema);
-module.exports = Transaction;
+const WalletTransactionSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      default: null,
+    },
+    description: {
+      type: String,
+      default: null,
+    },
+    from: {
+      type: String,
+      default: null,
+    },
+    recipient: {
+      type: String,
+      default: null,
+    },
+    reference: {
+      type: String,
+      default: null,
+    },
+    amount: {
+      type: String,
+      default: null,
+    },
+    status: {
+      type: String,
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const WalletTransactionModel = mongoose.model(
+  "wallet_transaction",
+  WalletTransactionSchema
+);
+const GiftCardTransactionModel = mongoose.model(
+  "giftcard_transaction",
+  GiftcardTransactionSchema
+);
+
+module.exports = { GiftCardTransactionModel, WalletTransactionModel };
