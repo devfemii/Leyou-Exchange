@@ -3,7 +3,7 @@ const multer = require("multer");
 // validate uploaded images
 const validateImage = multer({
   fileFilter(req, file, cb) {
-    // if file does not match extension
+    // Check the file extension
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       return cb(
         new Error(

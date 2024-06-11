@@ -14,6 +14,13 @@ const tradeGiftCard = async (req, res) => {
   } = req.body;
 
   try {
+    if (req.files.length == 0) {
+      return newError(
+        "Please upload a valid image file with either jpg, jpeg, png, or gif extension",
+        400
+      );
+    }
+
     await saveTransaction(
       req.decoded.id,
       giftCardCategory,
