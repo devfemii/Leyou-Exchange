@@ -102,7 +102,7 @@ const createWalletTransaction = async (
 const getTransactionHistory = async (userId) => {
   try {
     const transactions = await User.findOne({ _id: userId }).populate(
-      "giftCardTransactionHistory.giftcard_transaction"
+      "giftCardTransactionHistory.transaction"
     );
 
     return transactions;
