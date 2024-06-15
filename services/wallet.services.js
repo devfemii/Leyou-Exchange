@@ -62,24 +62,27 @@ const addBank = async (userId, accountName, bankName, accountNumber) => {
   }
 };
 
-const addBankToDB = async (userId, accountName, bankName, accountNumber) => {
-  const wallet = await getWalletBalance(userId);
+const createWallet = async (userId, transactionPin) => {
+  try {
+    const wallet = await getWalletBalance(userId);
 
-  if (!wallet) {
-    await Wallet.create({
-      userId: userId,
-      banks: [
-        {
-          accountName: accountName,
-          bankName: bankName,
-          accountNumber: accountNumber,
-        },
-      ],
-    });
-    return;
+    if (!wallet) {
+      await Wallet.create({
+        userId: userId,
+        transactionPin: transactionPin,
+      });
+    }
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
   }
+};
 
-  await addBank(userId, accountName, bankName, accountNumber);
+const addBankToDB = async (userId, accountName, bankName, accountNumber) => {
+  try {
+    await addBank(userId, accountName, bankName, accountNumber);
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
 };
 
 const deleteBank = async (userId, accountName, bankName, accountNumber) => {
@@ -107,4 +110,5 @@ module.exports = {
   getWalletBalance,
   deleteBank,
   addBankToDB,
+  createWallet,
 };

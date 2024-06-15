@@ -8,8 +8,7 @@ const {
   updateUserPassword,
 } = require("../services/auth.service");
 
-const { updateUserAccount } = require("../services/user.service");
-
+const { createWallet } = require("../services/wallet.services");
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 
 const register = async (req, res) => {
@@ -169,18 +168,15 @@ const updatePassword = async (req, res) => {
 const createTransactionPin = async (req, res) => {
   const { userId, transactionPin } = req.body;
   try {
-    await updateUserAccount(
-      { _id: userId },
-      { transactionPin: transactionPin }
-    );
+    await createWallet(userId, transactionPin);
 
     return res
       .status(201)
       .json(sendSuccessMessage("Pin created successfully", 201));
   } catch (error) {
     return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status));
+      .status(error.status ?? 500)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 

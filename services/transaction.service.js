@@ -5,7 +5,7 @@ const {
 const User = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
 
-const { updateUserAccount, existingUser } = require("../services/user.service");
+const { updateUserAccount } = require("../services/user.service");
 
 const { newError } = require("../utils");
 
@@ -62,15 +62,13 @@ const createWalletTransaction = async (
   bankDetails
 ) => {
   try {
-    const user = await User.findById(userId);
-
     const wallet = await Wallet.findOne({ userId: userId });
 
     if (wallet.balance < Number(amount)) {
       return newError("Insufficient balance", 400);
     }
 
-    if (user.transactionPin != transactionPin) {
+    if (wallet.transactionPin != transactionPin) {
       return newError(
         "Incorrect PIN entered. If you have forgotten your PIN, click “Forgot PIN”",
         400

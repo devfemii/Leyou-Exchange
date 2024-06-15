@@ -25,6 +25,6 @@ router.post("/password/reset", updatePassword);
 router.post("/code/send", sendCode);
 router.post("/code/verify", verifyCode);
 
-router.patch("/create/transaction-pin", createTransactionPin);
+router.post("/create/transaction-pin", createTransactionPin);
 
 module.exports = router;
