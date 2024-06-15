@@ -10,6 +10,10 @@ const WalletTransactionSchema = new mongoose.Schema({
     ref: "wallet_transaction",
     default: null,
   },
+  status: {
+    type: String,
+    default: null,
+  },
   tag: {
     type: String,
     default: null,

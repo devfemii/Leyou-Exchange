@@ -2,13 +2,12 @@ const express = require("express");
 const {
   tradeGiftCard,
   transactionHistory,
+  withdrawFunds,
 } = require("../controllers/transaction.controller");
 
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
 const imageValidatorMiddleware = require("../middleware/image.validation.middleware");
-
-const { sendErrorMessage } = require("../utils");
 
 router.post(
   "/card/trade",
@@ -21,5 +20,7 @@ router.post(
 );
 
 router.get("/history", authMiddleware, transactionHistory);
+
+router.post("/withdraw-funds", authMiddleware, withdrawFunds);
 
 module.exports = router;

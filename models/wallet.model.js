@@ -1,14 +1,5 @@
 const mongoose = require("mongoose");
 
-// schema for transaction history
-const TransactionSchema = new mongoose.Schema({
-  transaction: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "wallet_transaction",
-    default: [],
-  },
-});
-
 const AddNewBankSchema = new mongoose.Schema({
   accountName: {
     type: String,
@@ -28,6 +19,7 @@ const WalletSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
       required: true,
     },
     balance: {
@@ -35,7 +27,6 @@ const WalletSchema = new mongoose.Schema(
       default: 0,
     },
     banks: [AddNewBankSchema],
-    transactions: [TransactionSchema],
   },
   { timestamps: true }
 );

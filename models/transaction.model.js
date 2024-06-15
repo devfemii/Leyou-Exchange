@@ -40,33 +40,23 @@ const GiftcardTransactionSchema = new mongoose.Schema(
 
 const WalletTransactionSchema = new mongoose.Schema(
   {
-    type: {
-      type: String,
-      default: null,
-    },
-    description: {
-      type: String,
-      default: null,
-    },
-    from: {
-      type: String,
-      default: null,
-    },
-    recipient: {
-      type: String,
-      default: null,
-    },
-    reference: {
-      type: String,
-      default: null,
-    },
     amount: {
       type: String,
       default: null,
     },
-    status: {
-      type: String,
-      default: null,
+    bankDetail: {
+      accountName: {
+        type: String,
+        default: null,
+      },
+      bankName: {
+        type: String,
+        default: null,
+      },
+      accountNumber: {
+        type: String,
+        default: null,
+      },
     },
   },
   {

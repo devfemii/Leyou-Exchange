@@ -1,6 +1,7 @@
 const {
-  saveTransaction,
+  createGiftcardTransaction,
   getTransactionHistory,
+  createWalletTransaction,
 } = require("../services/transaction.service");
 const { sendSuccessMessage, sendErrorMessage, newError } = require("../utils");
 
@@ -21,7 +22,7 @@ const tradeGiftCard = async (req, res) => {
       );
     }
 
-    await saveTransaction(
+    await createGiftcardTransaction(
       req.decoded.id,
       giftCardCategory,
       giftCardSubCategory,
@@ -64,7 +65,34 @@ const transactionHistory = async (req, res) => {
   }
 };
 
+const withdrawFunds = async (req, res) => {
+  const { transactionPin, amount, bankDetails } = req.body;
+
+  try {
+    await createWalletTransaction(
+      req.decoded.id,
+      transactionPin,
+      amount,
+      bankDetails
+    );
+
+    return res
+      .status(200)
+      .json(
+        sendSuccessMessage(
+          "Your withdrawal request is now processing. We wll notify you shortly",
+          200
+        )
+      );
+  } catch (error) {
+    return res
+      .status(error.status ?? 500)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 module.exports = {
   tradeGiftCard,
   transactionHistory,
+  withdrawFunds,
 };
