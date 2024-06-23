@@ -2,6 +2,7 @@ const express = require("express");
 const {
   toggleBalanceVisibility,
   getGiftCards,
+  rankGiftCards,
 } = require("../controllers/user.controller");
 
 const router = express.Router();
@@ -13,6 +14,7 @@ router.patch(
   toggleBalanceVisibility
 );
 
+router.get("/giftcards/rank", authMiddleware, rankGiftCards);
 router.get("/giftcards", authMiddleware, getGiftCards);
 
 module.exports = router;

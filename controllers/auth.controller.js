@@ -146,9 +146,9 @@ const verifiedEmailPasswordReset = async (req, res) => {
 };
 
 const updatePassword = async (req, res) => {
-  const { id, password } = req.body;
+  const { id, currentPassword, password } = req.body;
   try {
-    await updateUserPassword(id, password);
+    await updateUserPassword(id, currentPassword, password);
 
     res
       .status(200)
@@ -180,6 +180,13 @@ const createTransactionPin = async (req, res) => {
   }
 };
 
+const changePin = async () => {
+  try {
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   register,
   createTransactionPin,
@@ -187,6 +194,7 @@ module.exports = {
   forgetPassword,
   updatePassword,
   updatePassword,
+  changePin,
   sendCode,
   verifyCode,
   login,

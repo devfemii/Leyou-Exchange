@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+const { newError } = require("../utils");
 
 const giftCards = [
   {
@@ -168,7 +168,26 @@ const findAllGiftCards = () => {
   return giftCards;
 };
 
+const rankGiftCardFromAdminsRate = () => {
+  let giftCardArray = [];
+  try {
+    findAllGiftCards().forEach((giftCard) => {
+      giftCard.subcategory.forEach((sub) => {
+        giftCardArray.push({
+          name: sub.name,
+          value: sub.value.NGN,
+        });
+      });
+    });
+
+    return giftCardArray.sort((a, b) => b.value - a.value);
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
 module.exports = {
   saveGiftCard,
   findAllGiftCards,
+  rankGiftCardFromAdminsRate,
 };

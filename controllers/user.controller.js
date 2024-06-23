@@ -1,5 +1,8 @@
 const { updateUserAccount, existingUser } = require("../services/user.service");
-const { findAllGiftCards } = require("../services/admin.service");
+const {
+  findAllGiftCards,
+  rankGiftCardFromAdminsRate,
+} = require("../services/admin.service");
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 
 const toggleBalanceVisibility = async (req, res) => {
@@ -32,7 +35,19 @@ const getGiftCards = (req, res) => {
   }
 };
 
+const rankGiftCards = (req, res) => {
+  try {
+    const rankedGiftCard = rankGiftCardFromAdminsRate();
+    return res.status(200).json(sendSuccessMessage(rankedGiftCard, 200));
+  } catch (error) {
+    return res
+      .status(error.status)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 module.exports = {
   toggleBalanceVisibility,
   getGiftCards,
+  rankGiftCards,
 };

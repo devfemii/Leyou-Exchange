@@ -3,6 +3,9 @@ const {
   tradeGiftCard,
   transactionHistory,
   withdrawFunds,
+  recoverTransactionPin,
+  changeTransactionPin,
+  verifyOTP,
 } = require("../controllers/transaction.controller");
 
 const router = express.Router();
@@ -20,7 +23,11 @@ router.post(
 );
 
 router.get("/history", authMiddleware, transactionHistory);
-
 router.post("/withdraw-funds", authMiddleware, withdrawFunds);
+
+router.post("/send-otp", authMiddleware, recoverTransactionPin);
+router.post("/verify-otp", verifyOTP);
+
+router.patch("/change-transaction-pin", authMiddleware, changeTransactionPin);
 
 module.exports = router;

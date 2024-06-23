@@ -77,6 +77,9 @@ const createWallet = async (userId, transactionPin) => {
   }
 };
 
+// update pin
+const updateTransactionPin = async () => {};
+
 const addBankToDB = async (userId, accountName, bankName, accountNumber) => {
   try {
     await addBank(userId, accountName, bankName, accountNumber);

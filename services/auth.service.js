@@ -150,15 +150,24 @@ const forgetUserPassword = async (email) => {
   }
 };
 
-const updateUserPassword = async (id, password) => {
+const updateUserPassword = async (id, currentPassword, password) => {
   try {
-    const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT));
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const user = await existingUser({ _id: id });
     if (!user.canResetPassword) {
       return newError("You need to verify email before resetting password!");
     }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+    if (!isPasswordCorrect) {
+      return newError("Invalid credentials", 400);
+    }
+
+    const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT));
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     await updateUserAccount(
       {

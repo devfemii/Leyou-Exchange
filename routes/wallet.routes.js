@@ -14,7 +14,6 @@ router.get("/banks", listBank);
 router.get("/customer/verify", verifyCustomer);
 router.post("/bank", authMiddleware, addBank);
 router.delete("/bank", authMiddleware, deleteBankDetails);
-
 // router.get("/history", authMiddleware, transactionHistory);
 
 module.exports = router;

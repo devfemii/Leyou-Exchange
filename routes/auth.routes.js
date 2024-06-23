@@ -8,6 +8,7 @@ const {
   forgetPassword,
   verifiedEmailPasswordReset,
   updatePassword,
+  changePin,
 } = require("../controllers/auth.controller");
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.get(
   verifiedEmailPasswordReset
 );
 router.post("/password/reset", updatePassword);
+router.post("/change-pin", changePin);
 
 router.post("/code/send", sendCode);
 router.post("/code/verify", verifyCode);

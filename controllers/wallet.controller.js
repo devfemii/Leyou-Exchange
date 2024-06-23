@@ -5,6 +5,7 @@ const {
   resolveAccountNumber,
   addBankToDB,
   deleteBank,
+  initiateWithdrawal,
 } = require("../services/wallet.services");
 
 const balance = async (req, res) => {
@@ -69,13 +70,9 @@ const deleteBankDetails = async (req, res) => {
       .status(200)
       .json(sendSuccessMessage("Bank account deleted successfully.", 200));
   } catch (error) {
-    if (error.status) {
-      return res
-        .status(error.status)
-        .json(sendErrorMessage(error.message, error.status));
-    }
-
-    res.json(error);
+    return res
+      .status(error.status ?? 500)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
