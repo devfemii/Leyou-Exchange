@@ -30,7 +30,6 @@ const resolveAccountNumber = async (accountNumber, bankCode) => {
 
     return response;
   } catch (error) {
-    // console.log(error);
     return newError(error, error.status ?? 500);
   }
 };
