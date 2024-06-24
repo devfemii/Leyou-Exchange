@@ -29,6 +29,7 @@ const listBank = async (req, res) => {
   }
 };
 
+// adding comments
 const verifyCustomer = async (req, res) => {
   const { accountNumber, bankCode } = req.query;
 
