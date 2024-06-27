@@ -80,6 +80,24 @@ const UserSchema = new mongoose.Schema({
     default: null,
     required: true,
   },
+  referredUsers: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+      isRegisteredSuccessfully: { type: Boolean },
+      hasMadeFirstTrade: { type: Boolean },
+    },
+  ],
+  referralTotalPoints: {
+    type: String,
+    default: 0,
+  },
+  referralPointsBalance: {
+    type: String,
+    default: 0,
+  },
   isEmailVerified: {
     type: Boolean,
     default: null,

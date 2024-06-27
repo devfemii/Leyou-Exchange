@@ -5,7 +5,7 @@ const {
 const User = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
 
-const { updateUserAccount } = require("../services/user.service");
+const { updateUserAccount, existingUser } = require("../services/user.service");
 
 const { newError } = require("../utils");
 
@@ -50,6 +50,27 @@ const createGiftcardTransaction = async (
         },
       }
     );
+
+    const referree = await existingUser({
+      "referredUsers.user": userId,
+    });
+
+    // change the status of the referral
+    referree.referredUsers.forEach((referredUser) => {
+      if (referredUser.user.toString() == userId.toString()) {
+        referredUser.hasMadeFirstTrade = true;
+      }
+    });
+
+    // add some point to the referral total point and balance
+    const totalPoint = Number(referree.referralTotalPoints) + 1;
+    const totalPointBalnce = Number(referree.referralPointsBalance) + 1;
+
+    // update the user referral data
+    referree.referralTotalPoints = totalPoint.toString();
+    referree.referralPointsBalance = totalPointBalnce.toString();
+
+    referree.save();
   } catch (error) {
     return newError(error.message, error.status);
   }

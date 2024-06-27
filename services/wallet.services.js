@@ -107,6 +107,16 @@ const deleteBank = async (userId, accountName, bankName, accountNumber) => {
   }
 };
 
+const getUserWallet = async (userId) => {
+  try {
+    console.log(userId);
+    const userWallet = await Wallet.findOne({ userId });
+    return userWallet;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
 module.exports = {
   listAvailableBank,
   resolveAccountNumber,
@@ -114,4 +124,5 @@ module.exports = {
   deleteBank,
   addBankToDB,
   createWallet,
+  getUserWallet,
 };

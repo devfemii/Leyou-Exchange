@@ -5,12 +5,14 @@ const {
   deleteBankDetails,
   addBank,
   verifyCustomer,
+  getWallet,
 } = require("../controllers/wallet.controller");
 
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
 
 router.get("/banks", listBank);
+router.get("/", authMiddleware, getWallet);
 router.get("/customer/verify", verifyCustomer);
 router.post("/bank", authMiddleware, addBank);
 router.delete("/bank", authMiddleware, deleteBankDetails);

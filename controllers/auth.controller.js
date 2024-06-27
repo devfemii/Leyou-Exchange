@@ -8,14 +8,23 @@ const {
   updateUserPassword,
 } = require("../services/auth.service");
 
+const { existingUser, updateUserAccount } = require("../services/user.service");
 const { createWallet } = require("../services/wallet.services");
-const { sendErrorMessage, sendSuccessMessage } = require("../utils");
+const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
 
 const register = async (req, res) => {
-  const { tradeWith, email, name, userName, phoneNumber, password } = req.body;
+  const {
+    tradeWith,
+    email,
+    name,
+    userName,
+    phoneNumber,
+    password,
+    referralCode,
+  } = req.body;
 
   try {
-    const user = await createUserAccount(
+    const newUser = await createUserAccount(
       tradeWith,
       email,
       password,
@@ -24,10 +33,35 @@ const register = async (req, res) => {
       phoneNumber
     );
 
+    if (referralCode.length == 8) {
+      const user = await existingUser({ referralCode });
+
+      if (!user.referralCode) {
+        return newError("Referral Code not found", 400);
+      }
+
+      if (user.referralCode == newUser.referralCode) {
+        return newError("You cannot refer yourself", 400);
+      }
+
+      await updateUserAccount(
+        { _id: user._id },
+        {
+          $push: {
+            referredUsers: {
+              user: newUser,
+              isRegisteredSuccessfully: true,
+              hasMadeFirstTrade: false,
+            },
+          },
+        }
+      );
+    }
+
     return res.status(201).json(
       sendSuccessMessage(
         {
-          userId: user._id,
+          userId: newUser._id,
           message:
             "Thanks for joining, you can now enjoy seamless trading of gift cards to naira to our platform.",
         },
@@ -35,8 +69,9 @@ const register = async (req, res) => {
       )
     );
   } catch (error) {
+    console.log(error);
     return res
-      .status(error.status)
+      .status(error.status ?? 500)
       .json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
