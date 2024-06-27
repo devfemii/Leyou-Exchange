@@ -1,4 +1,8 @@
-const { updateUserAccount, existingUser } = require("../services/user.service");
+const {
+  updateUserAccount,
+  existingUser,
+  getLeaderBoardFromDB,
+} = require("../services/user.service");
 const {
   findAllGiftCards,
   rankGiftCardFromAdminsRate,
@@ -46,8 +50,20 @@ const rankGiftCards = (req, res) => {
   }
 };
 
+const getLeaderBoard = async (req, res) => {
+  try {
+    const usersFromLeaderBorad = await getLeaderBoardFromDB();
+    return res.status(200).json(sendSuccessMessage(usersFromLeaderBorad, 200));
+  } catch (error) {
+    return res
+      .status(error.status)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 module.exports = {
   toggleBalanceVisibility,
   getGiftCards,
   rankGiftCards,
+  getLeaderBoard,
 };

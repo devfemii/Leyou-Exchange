@@ -174,8 +174,9 @@ const rankGiftCardFromAdminsRate = () => {
     findAllGiftCards().forEach((giftCard) => {
       giftCard.subcategory.forEach((sub) => {
         giftCardArray.push({
+          image: giftCard.image,
           name: sub.name,
-          value: sub.value.NGN,
+          value: { NGN: sub.value.NGN, GHS: sub.value.GHS },
         });
       });
     });

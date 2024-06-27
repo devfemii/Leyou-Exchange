@@ -19,7 +19,30 @@ const updateUserAccount = async (id, payload) => {
   }
 };
 
+const getLeaderBoardFromDB = async () => {
+  try {
+    const users = await User.find().populate(
+      "giftCardTransactionHistory.transaction"
+    );
+
+    let getGiftCardsTotalTransaction = [];
+    users.forEach((user) => {
+      getGiftCardsTotalTransaction.push({
+        user: user.userName,
+        totalGiftCardTransactions: user.giftCardTransactionHistory.length,
+      });
+    });
+
+    return getGiftCardsTotalTransaction.sort(
+      (a, b) => b.totalGiftCardTransactions - a.totalGiftCardTransactions
+    );
+  } catch (error) {
+    return newError(error.message, 500);
+  }
+};
+
 module.exports = {
   existingUser,
   updateUserAccount,
+  getLeaderBoardFromDB,
 };
