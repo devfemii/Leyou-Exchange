@@ -65,6 +65,7 @@ const addBank = async (req, res) => {
 const getWallet = async (req, res) => {
   try {
     const userWallet = await getUserWallet(req.decoded.id);
+    console.log(userWallet, req.decoded.id);
     res.status(200).json(sendSuccessMessage(userWallet, 200));
   } catch (error) {
     return res
