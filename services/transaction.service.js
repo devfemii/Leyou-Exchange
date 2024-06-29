@@ -118,6 +118,18 @@ const createWalletTransaction = async (
   }
 };
 
+const getWalletTransactionHistory = async (userId) => {
+  try {
+    const transactions = await User.findOne({ _id: userId }).populate(
+      "walletTransactionHistory.transaction"
+    );
+
+    return transactions;
+  } catch (error) {
+    return newError(error.message, error.status);
+  }
+};
+
 const getTransactionHistory = async (userId) => {
   try {
     const transactions = await User.findOne({ _id: userId }).populate(
@@ -134,4 +146,5 @@ module.exports = {
   createGiftcardTransaction,
   getTransactionHistory,
   createWalletTransaction,
+  getWalletTransactionHistory,
 };

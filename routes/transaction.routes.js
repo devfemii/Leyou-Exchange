@@ -5,6 +5,7 @@ const {
   withdrawFunds,
   recoverTransactionPin,
   changeTransactionPin,
+  walletTransactionHistory,
   verifyOTP,
 } = require("../controllers/transaction.controller");
 
@@ -23,6 +24,8 @@ router.post(
 );
 
 router.get("/history", authMiddleware, transactionHistory);
+
+router.get("/wallet-transactions", authMiddleware, walletTransactionHistory);
 router.post("/withdraw-funds", authMiddleware, withdrawFunds);
 
 router.post("/send-otp", authMiddleware, recoverTransactionPin);

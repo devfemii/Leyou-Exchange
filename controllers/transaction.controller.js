@@ -6,7 +6,10 @@ const {
   createGiftcardTransaction,
   getTransactionHistory,
   createWalletTransaction,
+  getWalletTransactionHistory,
 } = require("../services/transaction.service");
+
+const { getUserWallet } = require("../services/wallet.services");
 const { sendSuccessMessage, sendErrorMessage, newError } = require("../utils");
 
 const tradeGiftCard = async (req, res) => {
@@ -54,6 +57,24 @@ const tradeGiftCard = async (req, res) => {
 const transactionHistory = async (req, res) => {
   try {
     const transactions = await getTransactionHistory(req.decoded.id);
+
+    if (!transactions) {
+      return newError("Sorry you have not made any transaction yet", 404);
+    }
+
+    return res
+      .status(200)
+      .json(sendSuccessMessage(transactions.giftCardTransactionHistory, 200));
+  } catch (error) {
+    return res
+      .status(error.status ?? 500)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
+const walletTransactionHistory = async (req, res) => {
+  try {
+    const transactions = await getWalletTransactionHistory(req.decoded.id);
 
     if (!transactions) {
       return newError("Sorry you have not made any transaction yet", 404);
@@ -145,5 +166,6 @@ module.exports = {
   withdrawFunds,
   recoverTransactionPin,
   changeTransactionPin,
+  walletTransactionHistory,
   verifyOTP,
 };
