@@ -4,9 +4,12 @@ const dotenv = require("dotenv");
 
 const User = require("../models/user.model");
 const OTP = require("../models/OTP.model");
+const Wallet = require("../models/wallet.model");
 
 const { existingUser, updateUserAccount } = require("./user.service");
 const { sendResetLink, sendEmailVerificationOTP } = require("./email.service");
+const { getWalletBalance } = require("./wallet.services");
+
 const {
   newError,
   generateOTP,
@@ -55,6 +58,15 @@ const createUserAccount = async (
       phoneNumber: phoneNumber,
       referralCode: generatedReferralCode,
     });
+
+    // create a wallet after a user account has been created
+    const wallet = await getWalletBalance(user._id);
+
+    if (!wallet) {
+      await Wallet.create({
+        userId: user._id,
+      });
+    }
 
     return user;
   } catch (error) {

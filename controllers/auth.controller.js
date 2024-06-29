@@ -9,7 +9,7 @@ const {
 } = require("../services/auth.service");
 
 const { existingUser, updateUserAccount } = require("../services/user.service");
-const { createWallet } = require("../services/wallet.services");
+const { updateWallet } = require("../services/wallet.services");
 const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
 
 const register = async (req, res) => {
@@ -203,7 +203,7 @@ const updatePassword = async (req, res) => {
 const createTransactionPin = async (req, res) => {
   const { userId, transactionPin } = req.body;
   try {
-    await createWallet(userId, transactionPin);
+    await updateWallet(userId, transactionPin);
 
     return res
       .status(201)

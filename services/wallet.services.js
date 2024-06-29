@@ -62,16 +62,18 @@ const addBank = async (userId, accountName, bankName, accountNumber) => {
   }
 };
 
-const createWallet = async (userId, transactionPin) => {
+const updateWallet = async (userId, transactionPin) => {
   try {
     const wallet = await getWalletBalance(userId);
 
     if (!wallet) {
-      await Wallet.create({
-        userId: userId,
-        transactionPin: transactionPin,
-      });
+      return newError("Wallet does not exist", 400);
     }
+
+    await Wallet.findOneAndUpdate(
+      { userId: userId },
+      { transactionPin: transactionPin }
+    );
   } catch (error) {
     return newError(error.message, error.status ?? 500);
   }
@@ -119,6 +121,6 @@ module.exports = {
   getWalletBalance,
   deleteBank,
   addBankToDB,
-  createWallet,
+  updateWallet,
   getUserWallet,
 };
