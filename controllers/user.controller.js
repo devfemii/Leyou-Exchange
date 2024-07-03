@@ -61,9 +61,31 @@ const getLeaderBoard = async (req, res) => {
   }
 };
 
+const updateUserProfile = async (req, res) => {
+  const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } =
+    req.body;
+  try {
+    await updateUserAccount(
+      { _id: req.decoded.id },
+      { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber }
+    );
+
+    return res
+      .status(200)
+      .json(
+        sendSuccessMessage("You profile has been successfully updated", 200)
+      );
+  } catch (error) {
+    return res
+      .status(error.status)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 module.exports = {
   toggleBalanceVisibility,
   getGiftCards,
   rankGiftCards,
   getLeaderBoard,
+  updateUserProfile,
 };

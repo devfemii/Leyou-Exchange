@@ -53,7 +53,7 @@ const createUserAccount = async (
       tradeWith: tradeWith,
       email: email,
       password: password,
-      name: capitalizeName(name),
+      name: changeCasingToLowercase(name),
       userName: userName,
       phoneNumber: phoneNumber,
       referralCode: generatedReferralCode,
@@ -76,7 +76,9 @@ const createUserAccount = async (
 
 const loginUser = async (userName, password) => {
   try {
-    const user = await existingUser({ userName });
+    const user = await existingUser({
+      userName: changeCasingToLowercase(userName),
+    });
 
     if (!user) {
       return newError("User doesn't exist", 404);

@@ -4,6 +4,7 @@ const {
   getGiftCards,
   rankGiftCards,
   getLeaderBoard,
+  updateUserProfile,
 } = require("../controllers/user.controller");
 
 const router = express.Router();
@@ -18,5 +19,6 @@ router.patch(
 router.get("/giftcards/rank", authMiddleware, rankGiftCards);
 router.get("/giftcards", authMiddleware, getGiftCards);
 router.get("/leaderboard", getLeaderBoard);
+router.post("/profile/update", authMiddleware, updateUserProfile);
 
 module.exports = router;

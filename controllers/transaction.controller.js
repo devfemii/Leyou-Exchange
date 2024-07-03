@@ -48,6 +48,7 @@ const tradeGiftCard = async (req, res) => {
         )
       );
   } catch (error) {
+    console.log(error);
     return res
       .status(error.status ?? 500)
       .json(sendErrorMessage(error.message, error.status ?? 500));

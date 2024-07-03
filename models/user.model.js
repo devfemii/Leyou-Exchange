@@ -80,6 +80,14 @@ const UserSchema = new mongoose.Schema({
     default: null,
     required: true,
   },
+  dateOfBirth: {
+    type: String,
+    default: null,
+  },
+  bankVerificationNumber: {
+    type: String,
+    default: null,
+  },
   referredUsers: [
     {
       user: {
