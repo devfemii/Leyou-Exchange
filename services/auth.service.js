@@ -30,7 +30,9 @@ const createUserAccount = async (
   phoneNumber
 ) => {
   try {
-    const isUsernameExisting = await existingUser({ userName });
+    const isUsernameExisting = await existingUser({
+      userName: changeCasingToLowercase(userName),
+    });
     const isEmailExisting = await existingUser({ email });
 
     if (isEmailExisting) {
@@ -53,8 +55,8 @@ const createUserAccount = async (
       tradeWith: tradeWith,
       email: email,
       password: password,
-      name: changeCasingToLowercase(name),
-      userName: userName,
+      name: name,
+      userName: changeCasingToLowercase(userName),
       phoneNumber: phoneNumber,
       referralCode: generatedReferralCode,
     });
