@@ -33,6 +33,7 @@ const createUserAccount = async (
     const isUsernameExisting = await existingUser({
       userName: changeCasingToLowercase(userName),
     });
+    
     const isEmailExisting = await existingUser({ email });
 
     if (isEmailExisting) {

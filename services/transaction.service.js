@@ -1,6 +1,7 @@
 const {
   GiftCardTransactionModel,
   WalletTransactionModel,
+  referralPointTransactioModel,
 } = require("../models/transaction.model");
 const User = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
@@ -78,6 +79,53 @@ const createGiftcardTransaction = async (
   }
 };
 
+const redeemPointTransaction = async (userId, point, value) => {
+  try {
+    const user = await existingUser({ _id: userId });
+
+    if (Number(user.referralPointsBalance) < Number(point)) {
+      return newError(
+        "Insufficient point, refer more customers to gain more points",
+        400
+      );
+    }
+
+    // create a referral transaction endpoint
+    const transaction = await referralPointTransactioModel.create({
+      point,
+      value,
+    });
+
+    // find a wallet
+    const wallet = await Wallet.findOne({ userId });
+
+    // update the user wallet
+    await Wallet.findOneAndUpdate(
+      { userId },
+      {
+        balance: Number(wallet.balance) + Number(value),
+      }
+    );
+
+    // update the user data
+    await updateUserAccount(
+      { _id: userId },
+      {
+        $push: {
+          redeemedPoint: {
+            transaction: transaction._id,
+          },
+        },
+        referralPointsBalance: (
+          Number(user.referralPointsBalance) - Number(point)
+        ).toString(),
+      }
+    );
+  } catch (error) {
+    return newError(error.message, error.status);
+  }
+};
+
 const createWalletTransaction = async (
   userId,
   transactionPin,
@@ -149,4 +197,5 @@ module.exports = {
   getTransactionHistory,
   createWalletTransaction,
   getWalletTransactionHistory,
+  redeemPointTransaction,
 };

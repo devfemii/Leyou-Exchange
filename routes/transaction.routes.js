@@ -7,6 +7,7 @@ const {
   changeTransactionPin,
   walletTransactionHistory,
   verifyOTP,
+  redeemedPoint,
 } = require("../controllers/transaction.controller");
 
 const router = express.Router();
@@ -32,5 +33,7 @@ router.post("/send-otp", authMiddleware, recoverTransactionPin);
 router.post("/verify-otp", verifyOTP);
 
 router.patch("/change-transaction-pin", authMiddleware, changeTransactionPin);
+
+router.patch("/redeem-point", authMiddleware, redeemedPoint);
 
 module.exports = router;

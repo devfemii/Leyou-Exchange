@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 
+const redeemedPointTransaction = new mongoose.Schema({
+  point: {
+    type: String,
+    default: null,
+  },
+  value: {
+    type: String,
+    default: null,
+  },
+});
+
 const GiftcardTransactionSchema = new mongoose.Schema(
   {
     giftCardCategory: {
@@ -73,4 +84,13 @@ const GiftCardTransactionModel = mongoose.model(
   GiftcardTransactionSchema
 );
 
-module.exports = { GiftCardTransactionModel, WalletTransactionModel };
+const referralPointTransactioModel = mongoose.model(
+  "redeemed_point_transaction",
+  redeemedPointTransaction
+);
+
+module.exports = {
+  GiftCardTransactionModel,
+  WalletTransactionModel,
+  referralPointTransactioModel,
+};

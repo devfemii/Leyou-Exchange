@@ -5,6 +5,7 @@ const {
   rankGiftCards,
   getLeaderBoard,
   updateUserProfile,
+  getReferralDetails,
 } = require("../controllers/user.controller");
 
 const router = express.Router();
@@ -20,5 +21,6 @@ router.get("/giftcards/rank", authMiddleware, rankGiftCards);
 router.get("/giftcards", authMiddleware, getGiftCards);
 router.get("/leaderboard", getLeaderBoard);
 router.post("/profile/update", authMiddleware, updateUserProfile);
+router.get("/referrals", authMiddleware, getReferralDetails);
 
 module.exports = router;

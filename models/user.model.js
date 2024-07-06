@@ -20,6 +20,14 @@ const WalletTransactionSchema = new mongoose.Schema({
   },
 });
 
+const RedeemedPointSchema = new mongoose.Schema({
+  transaction: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "redeemed_point_transaction",
+    default: null,
+  },
+});
+
 const GiftcardTransactionSchema = new mongoose.Schema({
   transaction: {
     type: mongoose.Schema.Types.ObjectId,
@@ -119,6 +127,7 @@ const UserSchema = new mongoose.Schema({
   ],
   giftCardTransactionHistory: [GiftcardTransactionSchema],
   walletTransactionHistory: [WalletTransactionSchema],
+  redeemedPoint: [RedeemedPointSchema],
   canResetPassword: {
     type: Boolean,
     default: false,

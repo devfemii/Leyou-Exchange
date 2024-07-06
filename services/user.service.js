@@ -19,6 +19,13 @@ const updateUserAccount = async (id, payload) => {
   }
 };
 
+const getUserReferral = async (id) => {
+  const users = await existingUser({ _id: id });
+  users.populate("referredUsers.user");
+
+  return users.referredUsers;
+};
+
 const getLeaderBoardFromDB = async () => {
   try {
     const users = await User.find().populate(
@@ -45,4 +52,5 @@ module.exports = {
   existingUser,
   updateUserAccount,
   getLeaderBoardFromDB,
+  getUserReferral,
 };

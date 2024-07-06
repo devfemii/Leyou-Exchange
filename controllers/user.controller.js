@@ -2,6 +2,7 @@ const {
   updateUserAccount,
   existingUser,
   getLeaderBoardFromDB,
+  getUserReferral,
 } = require("../services/user.service");
 const {
   findAllGiftCards,
@@ -61,6 +62,17 @@ const getLeaderBoard = async (req, res) => {
   }
 };
 
+const getReferralDetails = async (req, res) => {
+  try {
+    const userReferral = await getUserReferral(req.decoded.id);
+    return res.status(200).json(sendSuccessMessage(userReferral, 200));
+  } catch (error) {
+    return res
+      .status(error.status)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 const updateUserProfile = async (req, res) => {
   const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } =
     req.body;
@@ -88,4 +100,5 @@ module.exports = {
   rankGiftCards,
   getLeaderBoard,
   updateUserProfile,
+  getReferralDetails,
 };
