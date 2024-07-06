@@ -74,6 +74,29 @@ const getReferralDetails = async (req, res) => {
   }
 };
 
+const verifyUserIdentity = async (req, res) => {
+  const { dateOfBirth, bankVerificationNumber } = req.body;
+  try {
+    await updateUserAccount(
+      { _id: req.decoded.id },
+      { dateOfBirth, bankVerificationNumber }
+    );
+
+    return res
+      .status(200)
+      .json(
+        sendSuccessMessage(
+          "your BVN verification is processing, you will get feedback in 2 business days",
+          200
+        )
+      );
+  } catch (error) {
+    return res
+      .status(error.status)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 const updateUserProfile = async (req, res) => {
   const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } =
     req.body;
@@ -124,4 +147,5 @@ module.exports = {
   getLeaderBoard,
   updateUserProfile,
   getReferralDetails,
+  verifyUserIdentity,
 };
