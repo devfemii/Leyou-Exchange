@@ -1,5 +1,6 @@
 const {
   updateUserAccount,
+  checkIfEmailAndUsernameExist,
   existingUser,
   getLeaderBoardFromDB,
   getUserReferral,
@@ -8,7 +9,7 @@ const {
   findAllGiftCards,
   rankGiftCardFromAdminsRate,
 } = require("../services/admin.service");
-const { sendErrorMessage, sendSuccessMessage } = require("../utils");
+const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
 
 const toggleBalanceVisibility = async (req, res) => {
   try {
@@ -77,6 +78,28 @@ const updateUserProfile = async (req, res) => {
   const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } =
     req.body;
   try {
+    const user = await existingUser({ _id: req.decoded.id });
+
+    const checkIfDetaillExist = await checkIfEmailAndUsernameExist(
+      user.email,
+      user.userName
+    );
+
+    const emails = checkIfDetaillExist.userEmails;
+    const userNames = checkIfDetaillExist.userNames;
+
+    emails.forEach((e) => {
+      if (e == email) {
+        return newError("Email already exist", 400);
+      }
+    });
+
+    userNames.forEach((u) => {
+      if (u == userName) {
+        return newError("UserName already exist", 400);
+      }
+    });
+
     await updateUserAccount(
       { _id: req.decoded.id },
       { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber }
