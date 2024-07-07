@@ -100,6 +100,7 @@ const verifyUserIdentity = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } =
     req.body;
+
   try {
     const user = await existingUser({ _id: req.decoded.id });
 
@@ -125,7 +126,14 @@ const updateUserProfile = async (req, res) => {
 
     await updateUserAccount(
       { _id: req.decoded.id },
-      { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber }
+      {
+        profilePic: req.file.buffer,
+        email,
+        userName,
+        phoneNumber,
+        dateOfBirth,
+        bankVerificationNumber,
+      }
     );
 
     return res

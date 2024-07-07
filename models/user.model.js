@@ -54,6 +54,10 @@ const UserSchema = new mongoose.Schema({
     default: null,
     required: true,
   },
+  profilePic: {
+    type: Buffer,
+    default: null,
+  },
   email: {
     type: String,
     default: null,
