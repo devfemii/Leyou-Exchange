@@ -7,6 +7,7 @@ const {
   updateUserProfile,
   getReferralDetails,
   verifyUserIdentity,
+  deleteUserAccount,
 } = require("../controllers/user.controller");
 
 const router = express.Router();
@@ -33,5 +34,7 @@ router.post(
 );
 router.patch("/identity-verification", authMiddleware, verifyUserIdentity);
 router.get("/referrals", authMiddleware, getReferralDetails);
+
+router.delete("/", authMiddleware, deleteUserAccount);
 
 module.exports = router;

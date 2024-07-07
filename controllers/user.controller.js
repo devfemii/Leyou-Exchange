@@ -4,6 +4,7 @@ const {
   existingUser,
   getLeaderBoardFromDB,
   getUserReferral,
+  deleteAccountFromDB,
 } = require("../services/user.service");
 const {
   findAllGiftCards,
@@ -148,6 +149,22 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+const deleteUserAccount = async (req, res) => {
+  try {
+    await deleteAccountFromDB(req.decoded.id);
+
+    return res
+      .status(200)
+      .json(
+        sendSuccessMessage("Your account has been successfully deleted", 200)
+      );
+  } catch (error) {
+    return res
+      .status(error.status)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 module.exports = {
   toggleBalanceVisibility,
   getGiftCards,
@@ -156,4 +173,5 @@ module.exports = {
   updateUserProfile,
   getReferralDetails,
   verifyUserIdentity,
+  deleteUserAccount,
 };

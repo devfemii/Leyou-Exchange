@@ -19,6 +19,14 @@ const updateUserAccount = async (id, payload) => {
   }
 };
 
+const deleteAccountFromDB = async (id) => {
+  try {
+    await User.findOneAndDelete({ _id: id });
+  } catch (error) {
+    return newError(error.message, 500);
+  }
+};
+
 const getUserReferral = async (id) => {
   const users = await existingUser({ _id: id });
   users.populate("referredUsers.user");
@@ -73,5 +81,6 @@ module.exports = {
   updateUserAccount,
   getLeaderBoardFromDB,
   getUserReferral,
+  deleteAccountFromDB,
   checkIfEmailAndUsernameExist,
 };

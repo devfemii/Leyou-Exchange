@@ -215,13 +215,6 @@ const createTransactionPin = async (req, res) => {
   }
 };
 
-const changePin = async () => {
-  try {
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 module.exports = {
   register,
   createTransactionPin,
@@ -229,7 +222,6 @@ module.exports = {
   forgetPassword,
   updatePassword,
   updatePassword,
-  changePin,
   sendCode,
   verifyCode,
   login,
