@@ -215,6 +215,28 @@ const createTransactionPin = async (req, res) => {
   }
 };
 
+const changePasswordFromProfile = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    await updateUserAccount(
+      { _id: req.decoded.id },
+      { canResetPassword: true }
+    );
+    await updateUserPassword(req.decoded.id, currentPassword, newPassword);
+
+    res
+      .status(200)
+      .json(
+        sendSuccessMessage("you have successfully updated your password", 200)
+      );
+  } catch (error) {
+    return res
+      .status(error.status ?? 500)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 module.exports = {
   register,
   createTransactionPin,
@@ -225,4 +247,5 @@ module.exports = {
   sendCode,
   verifyCode,
   login,
+  changePasswordFromProfile,
 };

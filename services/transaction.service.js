@@ -135,7 +135,7 @@ const createWalletTransaction = async (
   try {
     const wallet = await Wallet.findOne({ userId: userId });
 
-    if (wallet.balance < Number(amount)) {
+    if (Number(wallet.balance) < Number(amount)) {
       return newError("Insufficient balance", 400);
     }
 
@@ -170,11 +170,15 @@ const createWalletTransaction = async (
 
 const getWalletTransactionHistory = async (userId) => {
   try {
-    const transactions = await User.findOne({ _id: userId }).populate(
-      "walletTransactionHistory.transaction"
-    );
+    const user = await User.findById(userId)
+      .populate("walletTransactionHistory.transaction")
+      .exec();
 
-    return transactions;
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
   } catch (error) {
     return newError(error.message, error.status);
   }

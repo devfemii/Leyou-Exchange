@@ -120,7 +120,7 @@ const UserSchema = new mongoose.Schema({
   },
   isEmailVerified: {
     type: Boolean,
-    default: null,
+    default: false,
   },
   notifications: [
     {

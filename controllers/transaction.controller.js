@@ -84,7 +84,7 @@ const walletTransactionHistory = async (req, res) => {
 
     return res
       .status(200)
-      .json(sendSuccessMessage(transactions.giftCardTransactionHistory, 200));
+      .json(sendSuccessMessage(transactions.walletTransactionHistory, 200));
   } catch (error) {
     return res
       .status(error.status ?? 500)
