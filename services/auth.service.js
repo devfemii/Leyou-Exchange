@@ -174,6 +174,7 @@ const updateUserPassword = async (id, currentPassword, password) => {
       return newError("You need to verify email before resetting password!");
     }
 
+    // check if the current password is correct
     const isPasswordCorrect = await bcrypt.compare(
       currentPassword,
       user.password
@@ -181,6 +182,16 @@ const updateUserPassword = async (id, currentPassword, password) => {
 
     if (!isPasswordCorrect) {
       return newError("Invalid credentials", 400);
+    }
+
+    // check if the new password and new password are the same
+    const isNewPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (isNewPasswordCorrect) {
+      return newError(
+        "Your new password is the same as your current password, use another password",
+        400
+      );
     }
 
     const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT));

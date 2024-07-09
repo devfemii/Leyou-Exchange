@@ -2,6 +2,9 @@ const Wallet = require("../models/wallet.model");
 
 const axios = require("axios");
 const { newError } = require("../utils");
+const {
+  walletTransactionHistory,
+} = require("../controllers/transaction.controller");
 
 const listAvailableBank = async () => {
   try {
@@ -62,18 +65,9 @@ const addBank = async (userId, accountName, bankName, accountNumber) => {
   }
 };
 
-const updateWallet = async (userId, transactionPin) => {
+const updateWallet = async (userId, payload) => {
   try {
-    const wallet = await getWalletBalance(userId);
-
-    if (!wallet) {
-      return newError("Wallet does not exist", 400);
-    }
-
-    await Wallet.findOneAndUpdate(
-      { userId: userId },
-      { transactionPin: transactionPin }
-    );
+    await Wallet.findOneAndUpdate({ userId: userId }, payload);
   } catch (error) {
     return newError(error.message, error.status ?? 500);
   }

@@ -1,10 +1,11 @@
-const { sendSuccessMessage, sendErrorMessage } = require("../utils");
+const { sendSuccessMessage, sendErrorMessage, newError } = require("../utils");
 const {
   listAvailableBank,
   getWalletBalance,
   resolveAccountNumber,
   addBankToDB,
   deleteBank,
+  updateWallet,
   getUserWallet,
 } = require("../services/wallet.services");
 
@@ -89,6 +90,39 @@ const deleteBankDetails = async (req, res) => {
   }
 };
 
+const changePin = async (req, res) => {
+  const { currentTransactionPin, newTransactionPin } = req.body;
+  try {
+    const wallet = await getWalletBalance(req.decoded.id);
+
+    if (!wallet) {
+      return newError("Wallet does not exist", 400);
+    }
+
+    if (wallet.transactionPin != currentTransactionPin) {
+      return newError("your current pin does not exist", 404);
+    }
+
+    if (currentTransactionPin == newTransactionPin) {
+      return newError(
+        "Your new pin is the same as your current pin, use another pin",
+        404
+      );
+    }
+    await updateWallet(req.decoded.id, {
+      transactionPin: newTransactionPin,
+    });
+
+    res
+      .status(200)
+      .json(sendSuccessMessage("Your pin has been set successfully.", 200));
+  } catch (error) {
+    return res
+      .status(error.status ?? 500)
+      .json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
+
 module.exports = {
   balance,
   listBank,
@@ -96,4 +130,5 @@ module.exports = {
   deleteBankDetails,
   verifyCustomer,
   getWallet,
+  changePin,
 };

@@ -1,7 +1,5 @@
-const {
-  sendCodeToEmail,
-  verifyCodeFromEmail,
-} = require("../services/auth.service");
+const auth = require("../services/auth.service");
+
 const {
   createGiftcardTransaction,
   getTransactionHistory,
@@ -10,7 +8,6 @@ const {
   redeemPointTransaction,
 } = require("../services/transaction.service");
 
-const { getUserWallet } = require("../services/wallet.services");
 const { sendSuccessMessage, sendErrorMessage, newError } = require("../utils");
 
 const tradeGiftCard = async (req, res) => {
@@ -143,7 +140,7 @@ const recoverTransactionPin = async (req, res) => {
   const { email, transactionPin } = req.body;
 
   try {
-    await sendCodeToEmail(email);
+    await auth.sendCodeToEmail(email);
 
     return res
       .status(200)
@@ -164,7 +161,7 @@ const verifyOTP = async (req, res) => {
   const { OTP } = req.body;
 
   try {
-    await verifyCodeFromEmail(OTP);
+    await auth.verifyCodeFromEmail(OTP);
 
     return res
       .status(200)
