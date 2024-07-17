@@ -1,4 +1,19 @@
-const { newError } = require("../utils");
+const Admin = require("../models/admin.model");
+const {
+  GiftCardTransactionModel,
+  WalletTransactionModel,
+} = require("../models/transaction.model");
+const User = require("../models/user.model");
+const {
+  newError,
+  sendErrorMessage,
+  validateEmail,
+  capitalizeName,
+} = require("../utils");
+
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 const giftCards = [
   {
@@ -187,8 +202,178 @@ const rankGiftCardFromAdminsRate = () => {
   }
 };
 
+const getSingleUser = async (id) => {
+  try {
+    const user = await User.findById(id)
+      .populate("giftCardTransactionHistory")
+      .populate("walletTransactionHistory")
+      .exec();
+
+    if (!user) {
+      return res.status(404).json(sendErrorMessage("User not found", 404));
+    }
+
+    return user;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
+const getAllUsers = async () => {
+  try {
+    return await User.find({})
+      .populate("giftCardTransactionHistory")
+      .populate("walletTransactionHistory")
+      .exec();
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
+const getSinglegiftCardTransaction = async (id) => {
+  try {
+    const giftCard = await GiftCardTransactionModel.findById(id).exec();
+
+    if (!giftCard) {
+      return res
+        .status(404)
+        .json(sendErrorMessage("This transaction does not exist", 404));
+    }
+
+    return giftCard;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
+const getAllGiftCardTransactions = async () => {
+  try {
+    return await GiftCardTransactionModel.find({}).exec();
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
+const getSingleWalletTransaction = async (id) => {
+  try {
+    const walletTransaction = await WalletTransactionModel.findById(id).exec();
+
+    if (!walletTransaction) {
+      return res
+        .status(404)
+        .json(sendErrorMessage("This transaction does not exist", 404));
+    }
+
+    return walletTransaction;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
+const getAllWalletTransactions = async () => {
+  try {
+    return await WalletTransactionModel.find({}).exec();
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
+const loginAdmin = async (email, password) => {
+  try {
+    const admin = await Admin.findOne({ email: email });
+
+    if (!admin) {
+      return newError("Admin doesn't exist", 404);
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, admin.password);
+
+    if (!isPasswordCorrect) {
+      return newError("Invalid credentials", 400);
+    }
+
+    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET_ADMIN, {
+      expiresIn: process.env.JWT_TOKEN_EXPIRES,
+    });
+
+    return { admin, token };
+  } catch (error) {
+    return newError(error.message, error.status);
+  }
+};
+
+const createAdminAccount = async (
+  email,
+  password,
+  name,
+  userName,
+  phoneNumber
+) => {
+  try {
+    const admin = await Admin.findOne({ email: email });
+
+    if (admin) {
+      return newError("Email already exist", 400);
+    }
+
+    const validatedMail = validateEmail(email);
+
+    if (!validatedMail) {
+      return newError("Invalid email, try again", 400);
+    }
+
+    const user = await Admin.create({
+      email: email,
+      password: password,
+      name: capitalizeName(name),
+      userName: userName,
+      phoneNumber: phoneNumber,
+    });
+
+    return user;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+};
+
+const decideGiftCardTransanction = async (id, status) => {
+  try {
+    const giftCard = await GiftCardTransactionModel.findOneAndUpdate(
+      id,
+      { status: status },
+      { new: true }
+    );
+    return giftCard;
+  } catch (error) {
+    return newError(error.message, 500);
+  }
+};
+
+const decideWalletTransanction = async (id, status) => {
+  try {
+    const walletTransanction = await WalletTransactionModel.findOneAndUpdate(
+      id,
+      { status: status },
+      { new: true }
+    );
+    return walletTransanction;
+  } catch (error) {
+    return newError(error.message, 500);
+  }
+};
+
 module.exports = {
   saveGiftCard,
   findAllGiftCards,
   rankGiftCardFromAdminsRate,
+  getSingleUser,
+  getAllUsers,
+  getSinglegiftCardTransaction,
+  getAllGiftCardTransactions,
+  getSingleWalletTransaction,
+  getAllWalletTransactions,
+  createAdminAccount,
+  loginAdmin,
+  decideGiftCardTransanction,
+  decideWalletTransanction,
 };

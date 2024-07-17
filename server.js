@@ -17,6 +17,7 @@ const notificationRouter = require("./routes/notification.routes");
 const userRouter = require("./routes/user.routes");
 const transactionRouter = require("./routes/transaction.routes");
 const walletRouter = require("./routes/wallet.routes");
+const adminRouter = require("./routes/admin.routes");
 
 const app = express();
 const server = http.createServer(app);
@@ -33,6 +34,7 @@ app.use("/api/notifications", notificationRouter);
 app.use("/api/user", userRouter);
 app.use("/api/transactions", transactionRouter);
 app.use("/api/wallet", walletRouter);
+app.use("/api/admin", adminRouter);
 
 io.on("connection", (socket) => {
   socket.on("chat message", (msg) => {
