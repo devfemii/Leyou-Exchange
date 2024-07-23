@@ -196,10 +196,30 @@ const getTransactionHistory = async (userId) => {
   }
 };
 
+const changePin = async (userId, oldPin, newPin) => {
+  const wallet = await Wallet.findOne({ userId: userId });
+
+  if (!wallet) {
+    return { success: false, message: "Wallet not found" };
+  }
+
+  if (wallet.transactionPin !== oldPin) {
+    return { success: false, message: "Old PIN is incorrect" };
+  }
+
+  await Wallet.findOneAndUpdate(
+    { userId: userId },
+    { transactionPin: newPin },
+    { new: true }
+  );
+  return { success: true };
+};
+
 module.exports = {
   createGiftcardTransaction,
   getTransactionHistory,
   createWalletTransaction,
   getWalletTransactionHistory,
   redeemPointTransaction,
+  changePin,
 };

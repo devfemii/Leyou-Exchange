@@ -6,6 +6,7 @@ const {
   createWalletTransaction,
   getWalletTransactionHistory,
   redeemPointTransaction,
+  changePin,
 } = require("../services/transaction.service");
 
 const { sendSuccessMessage, sendErrorMessage, newError } = require("../utils");
@@ -175,9 +176,22 @@ const verifyOTP = async (req, res) => {
   }
 };
 
-const changeTransactionPin = async () => {
+const changeTransactionPin = async (req, res) => {
   try {
-  } catch (error) {}
+    const { oldPin, newPin } = req.body;
+    if (!oldPin || !newPin) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const result = await changePin(req.decoded.id, oldPin, newPin);
+    if (result.success) {
+      res.status(200).json({ message: "PIN changed successfully" });
+    } else {
+      res.status(400).json({ message: result.message });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 module.exports = {
