@@ -20,14 +20,6 @@ const WalletTransactionSchema = new mongoose.Schema({
   },
 });
 
-const RedeemedPointSchema = new mongoose.Schema({
-  transaction: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "redeemed_point_transaction",
-    default: null,
-  },
-});
-
 const GiftcardTransactionSchema = new mongoose.Schema({
   transaction: {
     type: mongoose.Schema.Types.ObjectId,
@@ -53,10 +45,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: null,
     required: true,
-  },
-  profilePic: {
-    type: Buffer,
-    default: null,
   },
   email: {
     type: String,
@@ -92,14 +80,6 @@ const UserSchema = new mongoose.Schema({
     default: null,
     required: true,
   },
-  dateOfBirth: {
-    type: String,
-    default: null,
-  },
-  bankVerificationNumber: {
-    type: String,
-    default: null,
-  },
   referredUsers: [
     {
       user: {
@@ -120,7 +100,7 @@ const UserSchema = new mongoose.Schema({
   },
   isEmailVerified: {
     type: Boolean,
-    default: false,
+    default: null,
   },
   notifications: [
     {
@@ -131,7 +111,6 @@ const UserSchema = new mongoose.Schema({
   ],
   giftCardTransactionHistory: [GiftcardTransactionSchema],
   walletTransactionHistory: [WalletTransactionSchema],
-  redeemedPoint: [RedeemedPointSchema],
   canResetPassword: {
     type: Boolean,
     default: false,

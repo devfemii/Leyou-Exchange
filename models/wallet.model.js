@@ -23,7 +23,7 @@ const WalletSchema = new mongoose.Schema(
       required: true,
     },
     balance: {
-      type: String,
+      type: Number,
       default: 0,
     },
     transactionPin: {

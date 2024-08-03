@@ -1,15 +1,7 @@
 const Admin = require("../models/admin.model");
-const {
-  GiftCardTransactionModel,
-  WalletTransactionModel,
-} = require("../models/transaction.model");
+const { GiftCardTransactionModel, WalletTransactionModel } = require("../models/transaction.model");
 const User = require("../models/user.model");
-const {
-  newError,
-  sendErrorMessage,
-  validateEmail,
-  capitalizeName,
-} = require("../utils");
+const { newError, sendErrorMessage, validateEmail, capitalizeName } = require("../utils");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -202,85 +194,83 @@ const rankGiftCardFromAdminsRate = () => {
   }
 };
 
-const getSingleUser = async (id) => {
+const getSingleUser = async (id) =>{
   try {
     const user = await User.findById(id)
-      .populate("giftCardTransactionHistory")
-      .populate("walletTransactionHistory")
-      .exec();
+        .populate("giftCardTransactionHistory")
+        .populate("walletTransactionHistory")
+        .exec();
 
-    if (!user) {
-      return res.status(404).json(sendErrorMessage("User not found", 404));
-    }
+        if(!user){
+          return res.status(404).json(sendErrorMessage('User not found', 404));
+      }
 
-    return user;
+      return user;
+
   } catch (error) {
     return newError(error.message, error.status ?? 500);
   }
-};
+}
 
-const getAllUsers = async () => {
+
+const getAllUsers = async () =>{
   try {
     return await User.find({})
-      .populate("giftCardTransactionHistory")
-      .populate("walletTransactionHistory")
-      .exec();
+        .populate("giftCardTransactionHistory")
+        .populate("walletTransactionHistory")
+        .exec();
   } catch (error) {
-    return newError(error.message, error.status ?? 500);
+      return newError(error.message, error.status ?? 500);
   }
-};
+}
 
 const getSinglegiftCardTransaction = async (id) => {
   try {
     const giftCard = await GiftCardTransactionModel.findById(id).exec();
 
-    if (!giftCard) {
-      return res
-        .status(404)
-        .json(sendErrorMessage("This transaction does not exist", 404));
+    if(!giftCard){
+      return res.status(404).json(sendErrorMessage('This transaction does not exist', 404));
     }
 
     return giftCard;
   } catch (error) {
     return newError(error.message, error.status ?? 500);
   }
-};
+}
 
-const getAllGiftCardTransactions = async () => {
-  try {
-    return await GiftCardTransactionModel.find({}).exec();
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
-  }
-};
+const getAllGiftCardTransactions = async () =>{
+    try {
+      return await GiftCardTransactionModel.find({}).exec();
+    } catch (error) {
+      return newError(error.message, error.status ?? 500);
+    }
+}
 
 const getSingleWalletTransaction = async (id) => {
   try {
     const walletTransaction = await WalletTransactionModel.findById(id).exec();
 
-    if (!walletTransaction) {
-      return res
-        .status(404)
-        .json(sendErrorMessage("This transaction does not exist", 404));
+    if(!walletTransaction){
+      return res.status(404).json(sendErrorMessage('This transaction does not exist', 404));
     }
 
     return walletTransaction;
   } catch (error) {
     return newError(error.message, error.status ?? 500);
   }
-};
+}
 
-const getAllWalletTransactions = async () => {
+const getAllWalletTransactions = async () =>{
   try {
     return await WalletTransactionModel.find({}).exec();
   } catch (error) {
     return newError(error.message, error.status ?? 500);
   }
-};
+}
 
 const loginAdmin = async (email, password) => {
   try {
-    const admin = await Admin.findOne({ email: email });
+    const admin = await Admin.findOne({email:email});
 
     if (!admin) {
       return newError("Admin doesn't exist", 404);
@@ -310,11 +300,12 @@ const createAdminAccount = async (
   phoneNumber
 ) => {
   try {
-    const admin = await Admin.findOne({ email: email });
+    const admin = await Admin.findOne({email:email});
 
     if (admin) {
       return newError("Email already exist", 400);
     }
+
 
     const validatedMail = validateEmail(email);
 
@@ -338,11 +329,7 @@ const createAdminAccount = async (
 
 const decideGiftCardTransanction = async (id, status) => {
   try {
-    const giftCard = await GiftCardTransactionModel.findOneAndUpdate(
-      id,
-      { status: status },
-      { new: true }
-    );
+    const giftCard = await GiftCardTransactionModel.findOneAndUpdate(id, {status:status}, { new: true });
     return giftCard;
   } catch (error) {
     return newError(error.message, 500);
@@ -351,16 +338,58 @@ const decideGiftCardTransanction = async (id, status) => {
 
 const decideWalletTransanction = async (id, status) => {
   try {
-    const walletTransanction = await WalletTransactionModel.findOneAndUpdate(
-      id,
-      { status: status },
-      { new: true }
-    );
+    const walletTransanction = await WalletTransactionModel.findOneAndUpdate(id, {status:status}, { new: true });
     return walletTransanction;
   } catch (error) {
     return newError(error.message, 500);
   }
 };
+
+const allPendingGiftcardTransactions = async () => {
+  try {
+    const pendingTransactions = await GiftCardTransactionModel.find({ status: 'processing' });
+    return pendingTransactions;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+}
+
+const allPendingWalletTransactions = async () => {
+  try {
+    const pendingTransactions = await WalletTransactionModel.find({ status: 'processing' });
+    return pendingTransactions;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+}
+
+const allCompletedWalletTransactions = async () => {
+  try {
+    const completedTransactions = await WalletTransactionModel.find({ status: 'completed' });
+    return completedTransactions;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+}
+
+const allCompletedGiftcardTransactions = async () => {
+  try {
+    const completedTransactions = await GiftCardTransactionModel.find({ status: 'completed' });
+    return completedTransactions;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+}
+
+const allUsersReferrals = async () => {
+  try {
+    const users = await User.find().populate("referredUsers.user");
+    return users;
+  } catch (error) {
+    return newError(error.message, error.status ?? 500);
+  }
+}
+
 
 module.exports = {
   saveGiftCard,
@@ -376,4 +405,9 @@ module.exports = {
   loginAdmin,
   decideGiftCardTransanction,
   decideWalletTransanction,
+  allPendingGiftcardTransactions,
+  allPendingWalletTransactions,
+  allCompletedGiftcardTransactions,
+  allCompletedWalletTransactions,
+  allUsersReferrals
 };

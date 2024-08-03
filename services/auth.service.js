@@ -30,10 +30,7 @@ const createUserAccount = async (
   phoneNumber
 ) => {
   try {
-    const isUsernameExisting = await existingUser({
-      userName: changeCasingToLowercase(userName),
-    });
-
+    const isUsernameExisting = await existingUser({ userName });
     const isEmailExisting = await existingUser({ email });
 
     if (isEmailExisting) {
@@ -56,8 +53,8 @@ const createUserAccount = async (
       tradeWith: tradeWith,
       email: email,
       password: password,
-      name: name,
-      userName: changeCasingToLowercase(userName),
+      name: capitalizeName(name),
+      userName: userName,
       phoneNumber: phoneNumber,
       referralCode: generatedReferralCode,
     });
@@ -79,9 +76,7 @@ const createUserAccount = async (
 
 const loginUser = async (userName, password) => {
   try {
-    const user = await existingUser({
-      userName: changeCasingToLowercase(userName),
-    });
+    const user = await existingUser({ userName });
 
     if (!user) {
       return newError("User doesn't exist", 404);
@@ -174,7 +169,6 @@ const updateUserPassword = async (id, currentPassword, password) => {
       return newError("You need to verify email before resetting password!");
     }
 
-    // check if the current password is correct
     const isPasswordCorrect = await bcrypt.compare(
       currentPassword,
       user.password
@@ -182,16 +176,6 @@ const updateUserPassword = async (id, currentPassword, password) => {
 
     if (!isPasswordCorrect) {
       return newError("Invalid credentials", 400);
-    }
-
-    // check if the new password and new password are the same
-    const isNewPasswordCorrect = await bcrypt.compare(password, user.password);
-
-    if (isNewPasswordCorrect) {
-      return newError(
-        "Your new password is the same as your current password, use another password",
-        400
-      );
     }
 
     const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT));

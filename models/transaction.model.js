@@ -1,16 +1,5 @@
 const mongoose = require("mongoose");
 
-const redeemedPointTransaction = new mongoose.Schema({
-  point: {
-    type: String,
-    default: null,
-  },
-  value: {
-    type: String,
-    default: null,
-  },
-});
-
 const GiftcardTransactionSchema = new mongoose.Schema(
   {
     giftCardCategory: {
@@ -43,6 +32,11 @@ const GiftcardTransactionSchema = new mongoose.Schema(
         default: [],
       },
     ],
+
+    status:{
+      type: String,
+      default: "processing"
+    }
   },
   {
     timestamps: true,
@@ -69,6 +63,11 @@ const WalletTransactionSchema = new mongoose.Schema(
         default: null,
       },
     },
+
+    status:{
+      type: String,
+      default: "processing"
+    }
   },
   {
     timestamps: true,
@@ -84,13 +83,4 @@ const GiftCardTransactionModel = mongoose.model(
   GiftcardTransactionSchema
 );
 
-const referralPointTransactioModel = mongoose.model(
-  "redeemed_point_transaction",
-  redeemedPointTransaction
-);
-
-module.exports = {
-  GiftCardTransactionModel,
-  WalletTransactionModel,
-  referralPointTransactioModel,
-};
+module.exports = { GiftCardTransactionModel, WalletTransactionModel };

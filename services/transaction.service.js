@@ -1,7 +1,6 @@
 const {
   GiftCardTransactionModel,
   WalletTransactionModel,
-  referralPointTransactioModel,
 } = require("../models/transaction.model");
 const User = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
@@ -56,71 +55,22 @@ const createGiftcardTransaction = async (
       "referredUsers.user": userId,
     });
 
-    if (referree) {
-      // change the status of the referral
-      referree.referredUsers.forEach((referredUser) => {
-        if (referredUser.user.toString() == userId.toString()) {
-          referredUser.hasMadeFirstTrade = true;
-        }
-      });
-
-      // add some point to the referral total point and balance
-      const totalPoint = Number(referree.referralTotalPoints) + 1;
-      const totalPointBalnce = Number(referree.referralPointsBalance) + 1;
-
-      // update the user referral data
-      referree.referralTotalPoints = totalPoint.toString();
-      referree.referralPointsBalance = totalPointBalnce.toString();
-
-      referree.save();
-    }
-  } catch (error) {
-    return newError(error.message, error.status);
-  }
-};
-
-const redeemPointTransaction = async (userId, point, value) => {
-  try {
-    const user = await existingUser({ _id: userId });
-
-    if (Number(user.referralPointsBalance) < Number(point)) {
-      return newError(
-        "Insufficient point, refer more customers to gain more points",
-        400
-      );
-    }
-
-    // create a referral transaction endpoint
-    const transaction = await referralPointTransactioModel.create({
-      point,
-      value,
+    // change the status of the referral
+    referree.referredUsers.forEach((referredUser) => {
+      if (referredUser.user.toString() == userId.toString()) {
+        referredUser.hasMadeFirstTrade = true;
+      }
     });
 
-    // find a wallet
-    const wallet = await Wallet.findOne({ userId });
+    // add some point to the referral total point and balance
+    const totalPoint = Number(referree.referralTotalPoints) + 1;
+    const totalPointBalnce = Number(referree.referralPointsBalance) + 1;
 
-    // update the user wallet
-    await Wallet.findOneAndUpdate(
-      { userId },
-      {
-        balance: Number(wallet.balance) + Number(value),
-      }
-    );
+    // update the user referral data
+    referree.referralTotalPoints = totalPoint.toString();
+    referree.referralPointsBalance = totalPointBalnce.toString();
 
-    // update the user data
-    await updateUserAccount(
-      { _id: userId },
-      {
-        $push: {
-          redeemedPoint: {
-            transaction: transaction._id,
-          },
-        },
-        referralPointsBalance: (
-          Number(user.referralPointsBalance) - Number(point)
-        ).toString(),
-      }
-    );
+    referree.save();
   } catch (error) {
     return newError(error.message, error.status);
   }
@@ -135,7 +85,7 @@ const createWalletTransaction = async (
   try {
     const wallet = await Wallet.findOne({ userId: userId });
 
-    if (Number(wallet.balance) < Number(amount)) {
+    if (wallet.balance < Number(amount)) {
       return newError("Insufficient balance", 400);
     }
 
@@ -170,15 +120,11 @@ const createWalletTransaction = async (
 
 const getWalletTransactionHistory = async (userId) => {
   try {
-    const user = await User.findById(userId)
-      .populate("walletTransactionHistory.transaction")
-      .exec();
+    const transactions = await User.findOne({ _id: userId }).populate(
+      "walletTransactionHistory.transaction"
+    );
 
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    return user;
+    return transactions;
   } catch (error) {
     return newError(error.message, error.status);
   }
@@ -196,30 +142,9 @@ const getTransactionHistory = async (userId) => {
   }
 };
 
-const changePin = async (userId, oldPin, newPin) => {
-  const wallet = await Wallet.findOne({ userId: userId });
-
-  if (!wallet) {
-    return { success: false, message: "Wallet not found" };
-  }
-
-  if (wallet.transactionPin !== oldPin) {
-    return { success: false, message: "Old PIN is incorrect" };
-  }
-
-  await Wallet.findOneAndUpdate(
-    { userId: userId },
-    { transactionPin: newPin },
-    { new: true }
-  );
-  return { success: true };
-};
-
 module.exports = {
   createGiftcardTransaction,
   getTransactionHistory,
   createWalletTransaction,
   getWalletTransactionHistory,
-  redeemPointTransaction,
-  changePin,
 };

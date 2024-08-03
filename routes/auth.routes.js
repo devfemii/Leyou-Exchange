@@ -8,11 +8,10 @@ const {
   forgetPassword,
   verifiedEmailPasswordReset,
   updatePassword,
-  changePasswordFromProfile,
+  changePin,
 } = require("../controllers/auth.controller");
 
 const router = express.Router();
-const authMiddleware = require("../middleware/auth.middleware");
 
 router.post("/register", register);
 router.post("/login", login);
@@ -23,12 +22,11 @@ router.get(
   verifiedEmailPasswordReset
 );
 router.post("/password/reset", updatePassword);
+router.post("/change-pin", changePin);
 
 router.post("/code/send", sendCode);
 router.post("/code/verify", verifyCode);
 
 router.patch("/create/transaction-pin", createTransactionPin);
-
-router.patch("/change-password", authMiddleware, changePasswordFromProfile);
 
 module.exports = router;

@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 
 let bcryptSalt = process.env.BCRYPT_SALT;
 
+
+
 const AdminSchema = new mongoose.Schema({
   socketId: {
     type: String,
@@ -33,7 +35,7 @@ const AdminSchema = new mongoose.Schema({
     default: null,
     required: true,
   },
-
+  
   notifications: [
     {
       type: mongoose.Schema.Types.ObjectId,
