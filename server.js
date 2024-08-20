@@ -1,15 +1,13 @@
+require("dotenv").config();
 const http = require("http");
 const { join } = require("node:path");
-
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
+const connectDB = require("./config/db.config");
 
 const initializeSocket = require("./socket/index");
-require("./config/db.config");
 
-dotenv.config();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // import application routes
 const authRouter = require("./routes/auth.routes");
@@ -50,8 +48,16 @@ app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "index.html"));
 });
 
-server.listen(port, () => {
-  console.log("attempting to connect to our database server...");
-});
+const start = async () => {
+  try {
+    await connectDB();
+    console.log("connected to database");
+    server.listen(PORT, () => {
+      console.log(`Server is listening at PORT ${PORT}`);
+    });
+  } catch (error) {}
+};
+
+start();
 
 module.exports = io;
