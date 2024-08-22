@@ -29,9 +29,9 @@ const uploadGiftCards = async (req, res) => {
 
 const getUser = async (req, res) => {
   const user = await getSingleUser(req.params.id);
-  
-
-  res.status(200).json(user);
+  if (user) {
+    res.status(StatusCodes.OK).json(user);
+  }
 };
 
 const getUsers = async (req, res) => {

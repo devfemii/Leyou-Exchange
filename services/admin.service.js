@@ -6,6 +6,7 @@ const { StatusCodes } = require("http-status-codes");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const { NotFoundError } = require("../errors");
 
 const giftCards = [
   {
@@ -200,8 +201,7 @@ const getSingleUser = async (id) => {
     .populate("walletTransactionHistory")
     .exec();
   if (!user) {
-    throw new Error("User not found");
-    //return res.status(404).json(sendErrorMessage("User not found", 404));
+    throw new NotFoundError("User not found");
   }
   return user;
 };
