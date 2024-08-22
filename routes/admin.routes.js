@@ -24,10 +24,12 @@ const router = express.Router();
 
 router.post("/register", registerAdmin);
 router.post("/login", adminLogin);
+router.get("/users", adminAuth, getUsers);
+
 
 router.post("/giftcard", uploadGiftCards);
 router.get("/user/:id", adminAuth, getUser);
-router.get("/users", adminAuth, getUsers);
+
 router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
 router.get("/pendinggiftcardtransactions", adminAuth, getAllPendingGiftcardTransactions);
 router.get("/pendingwallettransactions", adminAuth, getAllPendingWalletTransactions);
