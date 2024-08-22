@@ -16,7 +16,6 @@ const authMiddleware = require("../middleware/auth.middleware");
 const imageValidatorMiddleware = require("../middleware/image.validation.middleware");
 
 router.patch("/balance/toggle-visibility", authMiddleware, toggleBalanceVisibility);
-
 router.get("/chat/get-token", authMiddleware, getStreamToken);
 router.get("/giftcards/rank", authMiddleware, rankGiftCards);
 router.get("/giftcards", authMiddleware, getGiftCards);

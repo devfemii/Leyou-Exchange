@@ -12,16 +12,13 @@ const { findAllGiftCards, rankGiftCardFromAdminsRate } = require("../services/ad
 const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
 
 const getStreamToken = async (req, res) => {
+  const { id: userId } = req.decoded;
   try {
     const serverClient = StreamChat.getInstance(process.env.STREAM_API_KEY, process.env.STREAM_API_SECRET);
-    // you can still use new StreamChat('api_key', 'api_secret');
-
-    // generate a token for the user with id 'john'
-    const token = serverClient.createToken("john");
-    // next, hand this token to the client in your in your login or registration response
+    const token = serverClient.createToken(userId);
     return res.status(200).json({ token });
   } catch (error) {
-     return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 const toggleBalanceVisibility = async (req, res) => {
