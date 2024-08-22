@@ -43,6 +43,7 @@ const UserSchema = new mongoose.Schema({
   },
   tradeWith: {
     type: String,
+    default: "Naira",
     required: [true, "Please provide your trade with"],
   },
   email: {
