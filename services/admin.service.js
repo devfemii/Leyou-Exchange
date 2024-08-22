@@ -2,7 +2,7 @@ const Admin = require("../models/admin.model");
 const { GiftCardTransactionModel, WalletTransactionModel } = require("../models/transaction.model");
 const User = require("../models/user.model");
 const { newError, sendErrorMessage, validateEmail, capitalizeName } = require("../utils");
-
+const { StatusCodes } = require("http-status-codes");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
@@ -291,12 +291,15 @@ const loginAdmin = async (email, password) => {
 
 const createAdminAccount = async (email, password, name, userName, phoneNumber) => {
   try {
-    const admin = await Admin.findOne({ email: email });
-    if (admin) {
-      return newError("Email already exist", 400);
+    const isEmailExisting = await Admin.findOne({ email });
+    if (isEmailExisting) {
+      return newError("Email already exist", StatusCodes.BAD_REQUEST);
+    }
+    const isUsernameExisting = await Admin.findOne({ userName });
+    if (isUsernameExisting) {
+      return newError("Username already exist", StatusCodes.BAD_REQUEST);
     }
     const validatedMail = validateEmail(email);
-
     if (!validatedMail) {
       return newError("Invalid email, try again", 400);
     }
