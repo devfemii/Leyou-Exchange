@@ -19,7 +19,8 @@
     "mongoose": "^8.3.5",
     "multer": "^1.4.5-lts.1",
     "paystack": "^2.0.1",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "stream-chat": "^8.38.0"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",

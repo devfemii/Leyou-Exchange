@@ -1,3 +1,5 @@
+const { StreamChat } = require("stream-chat");
+
 const {
   updateUserAccount,
   checkIfEmailAndUsernameExist,
@@ -6,12 +8,22 @@ const {
   getUserReferral,
   deleteAccountFromDB,
 } = require("../services/user.service");
-const {
-  findAllGiftCards,
-  rankGiftCardFromAdminsRate,
-} = require("../services/admin.service");
+const { findAllGiftCards, rankGiftCardFromAdminsRate } = require("../services/admin.service");
 const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
 
+const getStreamToken = async (req, res) => {
+  try {
+    const serverClient = StreamChat.getInstance(process.env.STREAM_API_KEY, process.env.STREAM_API_SECRET);
+    // you can still use new StreamChat('api_key', 'api_secret');
+
+    // generate a token for the user with id 'john'
+    const token = serverClient.createToken("john");
+    // next, hand this token to the client in your in your login or registration response
+    return res.status(200).json({ token });
+  } catch (error) {
+     return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
+  }
+};
 const toggleBalanceVisibility = async (req, res) => {
   try {
     const user = await existingUser({ _id: req.decoded.id });
@@ -21,13 +33,9 @@ const toggleBalanceVisibility = async (req, res) => {
       { isBalanceVisible: !user.isBalanceVisible }
     );
 
-    return res
-      .status(201)
-      .json(sendSuccessMessage(updatedBalanceVisibility.isBalanceVisible, 201));
+    return res.status(201).json(sendSuccessMessage(updatedBalanceVisibility.isBalanceVisible, 201));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
@@ -36,9 +44,7 @@ const getGiftCards = (req, res) => {
     const giftCards = findAllGiftCards();
     return res.status(200).json(sendSuccessMessage(giftCards, 200));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
@@ -47,9 +53,7 @@ const rankGiftCards = (req, res) => {
     const rankedGiftCard = rankGiftCardFromAdminsRate();
     return res.status(200).json(sendSuccessMessage(rankedGiftCard, 200));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
@@ -58,9 +62,7 @@ const getLeaderBoard = async (req, res) => {
     const usersFromLeaderBorad = await getLeaderBoardFromDB();
     return res.status(200).json(sendSuccessMessage(usersFromLeaderBorad, 200));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
@@ -69,19 +71,14 @@ const getReferralDetails = async (req, res) => {
     const userReferral = await getUserReferral(req.decoded.id);
     return res.status(200).json(sendSuccessMessage(userReferral, 200));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
 const verifyUserIdentity = async (req, res) => {
   const { dateOfBirth, bankVerificationNumber } = req.body;
   try {
-    await updateUserAccount(
-      { _id: req.decoded.id },
-      { dateOfBirth, bankVerificationNumber }
-    );
+    await updateUserAccount({ _id: req.decoded.id }, { dateOfBirth, bankVerificationNumber });
 
     return res
       .status(200)
@@ -92,23 +89,17 @@ const verifyUserIdentity = async (req, res) => {
         )
       );
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
 const updateUserProfile = async (req, res) => {
-  const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } =
-    req.body;
+  const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } = req.body;
 
   try {
     const user = await existingUser({ _id: req.decoded.id });
 
-    const checkIfDetaillExist = await checkIfEmailAndUsernameExist(
-      user.email,
-      user.userName
-    );
+    const checkIfDetaillExist = await checkIfEmailAndUsernameExist(user.email, user.userName);
 
     const emails = checkIfDetaillExist.userEmails;
     const userNames = checkIfDetaillExist.userNames;
@@ -137,15 +128,9 @@ const updateUserProfile = async (req, res) => {
       }
     );
 
-    return res
-      .status(200)
-      .json(
-        sendSuccessMessage("You profile has been successfully updated", 200)
-      );
+    return res.status(200).json(sendSuccessMessage("You profile has been successfully updated", 200));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
@@ -153,15 +138,9 @@ const deleteUserAccount = async (req, res) => {
   try {
     await deleteAccountFromDB(req.decoded.id);
 
-    return res
-      .status(200)
-      .json(
-        sendSuccessMessage("Your account has been successfully deleted", 200)
-      );
+    return res.status(200).json(sendSuccessMessage("Your account has been successfully deleted", 200));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
@@ -174,4 +153,5 @@ module.exports = {
   getReferralDetails,
   verifyUserIdentity,
   deleteUserAccount,
+  getStreamToken,
 };

@@ -9,7 +9,7 @@ const initializeSocket = require("./socket/index");
 
 const PORT = process.env.PORT || 5000;
 
-// import application routes
+//<---------- import application routes---------->
 const authRouter = require("./routes/auth.routes");
 const notificationRouter = require("./routes/notification.routes");
 const userRouter = require("./routes/user.routes");
@@ -27,9 +27,11 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use(cors());
 
+
+
+app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/notifications", notificationRouter);
-app.use("/api/user", userRouter);
 app.use("/api/transactions", transactionRouter);
 app.use("/api/wallet", walletRouter);
 app.use("/api/admin", adminRouter);
@@ -55,7 +57,9 @@ const start = async () => {
     server.listen(PORT, () => {
       console.log(`Server is listening at PORT ${PORT}`);
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 start();
