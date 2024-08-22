@@ -47,6 +47,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide your trade with"],
   },
   email: {
+    unique: [true, "Email already exist"],
     type: String,
     required: [true, "Please provide your email address"],
   },
@@ -55,6 +56,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide your  name"],
   },
   userName: {
+    unique: [true, "Username already exist"],
     type: String,
     required: [true, "Please provide your username"],
   },

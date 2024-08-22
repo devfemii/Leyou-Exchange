@@ -3,39 +3,34 @@ const bcrypt = require("bcrypt");
 
 let bcryptSalt = process.env.BCRYPT_SALT;
 
-
-
 const AdminSchema = new mongoose.Schema({
   socketId: {
     type: String,
     default: null,
   },
   email: {
+    unique: true,
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide email address"],
   },
   name: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide name"],
   },
   userName: {
     type: String,
-    default: null,
-    required: true,
+    unique: true,
+    required: [true, "Please provide userName"],
   },
   phoneNumber: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide phoneNumber"],
   },
   password: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide password"],
   },
-  
+
   notifications: [
     {
       type: mongoose.Schema.Types.ObjectId,
