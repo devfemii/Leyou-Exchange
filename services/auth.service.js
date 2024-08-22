@@ -19,16 +19,7 @@ const {
   validateEmail,
 } = require("../utils");
 
-dotenv.config();
-
-const createUserAccount = async (
-  tradeWith,
-  email,
-  password,
-  name,
-  userName,
-  phoneNumber
-) => {
+const createUserAccount = async (tradeWith, email, password, name, userName, phoneNumber) => {
   try {
     const isUsernameExisting = await existingUser({ userName });
     const isEmailExisting = await existingUser({ email });
@@ -53,7 +44,7 @@ const createUserAccount = async (
       tradeWith: tradeWith,
       email: email,
       password: password,
-      name: capitalizeName(name),
+      name: name && capitalizeName(name),
       userName: userName,
       phoneNumber: phoneNumber,
       referralCode: generatedReferralCode,
@@ -76,6 +67,9 @@ const createUserAccount = async (
 
 const loginUser = async (userName, password) => {
   try {
+    if (!userName || !password) {
+      return newError("Please provide your username or password", 404);
+    }
     const user = await existingUser({ userName });
 
     if (!user) {
@@ -147,13 +141,9 @@ const forgetUserPassword = async (email) => {
       return newError("User does not exist", 404);
     }
 
-    const token = jwt.sign(
-      { id: user._id, name: user.name },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: 20 * 60,
-      }
-    );
+    const token = jwt.sign({ id: user._id, name: user.name }, process.env.JWT_SECRET, {
+      expiresIn: 20 * 60,
+    });
 
     const link = `${process.env.SERVER_URL}/api/auth/verify-mail-password-reset/${token}`;
     await sendResetLink(email, user.name, link);
@@ -169,10 +159,7 @@ const updateUserPassword = async (id, currentPassword, password) => {
       return newError("You need to verify email before resetting password!");
     }
 
-    const isPasswordCorrect = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
+    const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
 
     if (!isPasswordCorrect) {
       return newError("Invalid credentials", 400);

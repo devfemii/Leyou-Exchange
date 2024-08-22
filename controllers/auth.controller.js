@@ -13,27 +13,12 @@ const { updateWallet } = require("../services/wallet.services");
 const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
 
 const register = async (req, res) => {
-  const {
-    tradeWith,
-    email,
-    name,
-    userName,
-    phoneNumber,
-    password,
-    referralCode,
-  } = req.body;
+  const { tradeWith, email, name, userName, phoneNumber, password, referralCode } = req.body;
 
   try {
-    const newUser = await createUserAccount(
-      tradeWith,
-      email,
-      password,
-      name,
-      userName,
-      phoneNumber
-    );
+    const newUser = await createUserAccount(tradeWith, email, password, name, userName, phoneNumber);
 
-    if (referralCode.length == 8) {
+    if (referralCode && referralCode.length === 8) {
       const user = await existingUser({ referralCode });
 
       if (!user.referralCode) {
@@ -69,10 +54,7 @@ const register = async (req, res) => {
       )
     );
   } catch (error) {
-    console.log(error);
-    return res
-      .status(error.status ?? 500)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 
@@ -99,9 +81,7 @@ const login = async (req, res) => {
       )
     );
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status));
   }
 };
 
@@ -110,13 +90,9 @@ const forgetPassword = async (req, res) => {
 
   try {
     await forgetUserPassword(email);
-    return res
-      .status(201)
-      .json(sendSuccessMessage("Reset link sent successfully", 200));
+    return res.status(201).json(sendSuccessMessage("Reset link sent successfully", 200));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status));
   }
 };
 
@@ -134,9 +110,7 @@ const sendCode = async (req, res) => {
         )
       );
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status));
   }
 };
 
@@ -154,9 +128,7 @@ const verifyCode = async (req, res) => {
       )
     );
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status));
   }
 };
 
@@ -174,9 +146,7 @@ const verifiedEmailPasswordReset = async (req, res) => {
         )
       );
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status));
   }
 };
 
@@ -187,16 +157,9 @@ const updatePassword = async (req, res) => {
 
     res
       .status(200)
-      .json(
-        sendSuccessMessage(
-          "you have successfully updated your password, proceed to login",
-          200
-        )
-      );
+      .json(sendSuccessMessage("you have successfully updated your password, proceed to login", 200));
   } catch (error) {
-    return res
-      .status(error.status)
-      .json(sendErrorMessage(error.message, error.status));
+    return res.status(error.status).json(sendErrorMessage(error.message, error.status));
   }
 };
 
@@ -205,13 +168,9 @@ const createTransactionPin = async (req, res) => {
   try {
     await updateWallet(userId, transactionPin);
 
-    return res
-      .status(201)
-      .json(sendSuccessMessage("Pin created successfully", 201));
+    return res.status(201).json(sendSuccessMessage("Pin created successfully", 201));
   } catch (error) {
-    return res
-      .status(error.status ?? 500)
-      .json(sendErrorMessage(error.message, error.status ?? 500));
+    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
 

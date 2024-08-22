@@ -27,10 +27,9 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use(cors());
 
-
-
-app.use("/api/user", userRouter);
+//<---------- routes ---------->
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/transactions", transactionRouter);
 app.use("/api/wallet", walletRouter);

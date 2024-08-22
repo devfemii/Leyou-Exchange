@@ -43,33 +43,27 @@ const UserSchema = new mongoose.Schema({
   },
   tradeWith: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide your trade with"],
   },
   email: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide your email address"],
   },
   name: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide your  name"],
   },
   userName: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide your username"],
   },
   phoneNumber: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide your phone number"],
   },
   password: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide your password"],
   },
   isBalanceVisible: {
     type: Boolean,
@@ -77,8 +71,7 @@ const UserSchema = new mongoose.Schema({
   },
   referralCode: {
     type: String,
-    default: null,
-    required: true,
+    required: [true, "Please provide your referral code"],
   },
   referredUsers: [
     {
