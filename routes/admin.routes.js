@@ -25,10 +25,10 @@ const router = express.Router();
 router.post("/register", registerAdmin);
 router.post("/login", adminLogin);
 router.get("/users", adminAuth, getUsers);
-
+router.get("/user/:id", adminAuth, getUser);
 
 router.post("/giftcard", uploadGiftCards);
-router.get("/user/:id", adminAuth, getUser);
+
 
 router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
 router.get("/pendinggiftcardtransactions", adminAuth, getAllPendingGiftcardTransactions);

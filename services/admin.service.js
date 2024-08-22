@@ -194,25 +194,22 @@ const rankGiftCardFromAdminsRate = () => {
 };
 
 const getSingleUser = async (id) => {
-  try {
-    const user = await User.findById(id)
-      .populate("giftCardTransactionHistory")
-      .populate("walletTransactionHistory")
-      .exec();
-
-    if (!user) {
-      return res.status(404).json(sendErrorMessage("User not found", 404));
-    }
-
-    return user;
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
+  const user = await User.findById(id)
+    .select("-password")
+    .populate("giftCardTransactionHistory")
+    .populate("walletTransactionHistory")
+    .exec();
+  if (!user) {
+    throw new Error("User not found");
+    //return res.status(404).json(sendErrorMessage("User not found", 404));
   }
+  return user;
 };
 
 const getAllUsers = async () => {
   try {
     return await User.find({})
+      .select("-password")
       .populate("giftCardTransactionHistory")
       .populate("walletTransactionHistory")
       .exec();

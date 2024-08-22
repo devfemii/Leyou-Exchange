@@ -28,12 +28,10 @@ const uploadGiftCards = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  try {
-    const user = await getSingleUser(req.params.id);
-    res.status(200).json(user);
-  } catch (error) {
-    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
+  const user = await getSingleUser(req.params.id);
+  
+
+  res.status(200).json(user);
 };
 
 const getUsers = async (req, res) => {

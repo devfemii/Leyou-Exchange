@@ -1,4 +1,6 @@
+require("express-async-errors");
 require("dotenv").config();
+
 const http = require("http");
 const { join } = require("node:path");
 const express = require("express");
@@ -16,6 +18,7 @@ const userRouter = require("./routes/user.routes");
 const transactionRouter = require("./routes/transaction.routes");
 const walletRouter = require("./routes/wallet.routes");
 const adminRouter = require("./routes/admin.routes");
+const ErrorHandlerMiddleWare = require("./middleware/error-handler");
 
 const app = express();
 const server = http.createServer(app);
@@ -34,6 +37,9 @@ app.use("/api/notifications", notificationRouter);
 app.use("/api/transactions", transactionRouter);
 app.use("/api/wallet", walletRouter);
 app.use("/api/admin", adminRouter);
+
+
+app.use(ErrorHandlerMiddleWare);
 
 io.on("connection", (socket) => {
   socket.on("chat message", (msg) => {
