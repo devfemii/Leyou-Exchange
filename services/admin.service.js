@@ -268,11 +268,9 @@ const getAllWalletTransactions = async () => {
 const loginAdmin = async (email, password) => {
   try {
     const admin = await Admin.findOne({ email: email });
-
     if (!admin) {
-      return newError("Admin doesn't exist", 404);
+      return newError("Invalid credentials", 404);
     }
-
     const isPasswordCorrect = await bcrypt.compare(password, admin.password);
 
     if (!isPasswordCorrect) {
