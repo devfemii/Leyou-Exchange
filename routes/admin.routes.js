@@ -1,15 +1,19 @@
 const express = require("express");
 const {
-  getUser,
-  uploadGiftCards,
   getUsers,
+  getUser,
+  getDashBoard,
+  registerAdmin,
+  adminLogin,
+
+
+
+  uploadGiftCards,
   getGiftCardTransaction,
   getAllGiftCardTransactions,
   getGiftcardTransactions,
   getWalletTransaction,
   getWalletTransactions,
-  registerAdmin,
-  adminLogin,
   giftCardTransanctionDecision,
   walletTransanctionDecision,
   getAllPendingGiftcardTransactions,
@@ -24,12 +28,16 @@ const router = express.Router();
 
 router.post("/register", registerAdmin);
 router.post("/login", adminLogin);
+router.get("/dashboard", getDashBoard);
 router.get("/users", adminAuth, getUsers);
 router.get("/user/:id", adminAuth, getUser);
 
+
+
+
+
+
 router.post("/giftcard", uploadGiftCards);
-
-
 router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
 router.get("/pendinggiftcardtransactions", adminAuth, getAllPendingGiftcardTransactions);
 router.get("/pendingwallettransactions", adminAuth, getAllPendingWalletTransactions);

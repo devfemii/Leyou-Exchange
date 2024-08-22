@@ -1,4 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
+const User = require("../models/user.model");
 const {
   getSingleUser,
   getAllUsers,
@@ -112,6 +113,10 @@ const adminLogin = async (req, res) => {
   }
 };
 
+const getDashBoard = async (req, res) => {
+  const numberOfUsers = await User.countDocuments();
+  return res.status(StatusCodes.OK).json({ numberOfUsers });
+};
 const giftCardTransanctionDecision = async (req, res) => {
   try {
     const { status } = req.body;
@@ -197,6 +202,7 @@ module.exports = {
   uploadGiftCards,
   getUser,
   getUsers,
+  getDashBoard,
   getGiftCardTransaction,
   getGiftcardTransactions,
   getWalletTransaction,
