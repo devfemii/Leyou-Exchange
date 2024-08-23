@@ -1,11 +1,13 @@
 const Admin = require("../models/admin.model");
-const { GiftCardTransactionModel, WalletTransactionModel } = require("../models/transaction.model");
+const {
+  GiftCardTransactionModel: GiftCardTransaction,
+  WalletTransactionModel: WalletTransaction,
+} = require("../models/transaction.model");
 const User = require("../models/user.model");
 const { newError, sendErrorMessage, validateEmail, capitalizeName } = require("../utils");
 const { StatusCodes } = require("http-status-codes");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
 const { NotFoundError } = require("../errors");
 
 const giftCards = [
@@ -220,7 +222,7 @@ const getAllUsers = async () => {
 
 const getSinglegiftCardTransaction = async (id) => {
   try {
-    const giftCard = await GiftCardTransactionModel.findById(id).exec();
+    const giftCard = await GiftCardTransaction.findById(id).exec();
 
     if (!giftCard) {
       return res.status(404).json(sendErrorMessage("This transaction does not exist", 404));
@@ -232,17 +234,17 @@ const getSinglegiftCardTransaction = async (id) => {
   }
 };
 
-const getAllGiftCardTransactions = async () => {
+const getAllGiftCardTransactions = async (query) => {
   try {
-    return await GiftCardTransactionModel.find({}).exec();
+    return await GiftCardTransaction.find(query).exec();
   } catch (error) {
-    return newError(error.message, error.status ?? 500);
+    throw new Error(error);
   }
 };
 
 const getSingleWalletTransaction = async (id) => {
   try {
-    const walletTransaction = await WalletTransactionModel.findById(id).exec();
+    const walletTransaction = await WalletTransaction.findById(id).exec();
 
     if (!walletTransaction) {
       return res.status(404).json(sendErrorMessage("This transaction does not exist", 404));
@@ -254,11 +256,11 @@ const getSingleWalletTransaction = async (id) => {
   }
 };
 
-const getAllWalletTransactions = async () => {
+const getAllWalletTransactions = async (query) => {
   try {
-    return await WalletTransactionModel.find({}).exec();
+    return await WalletTransaction.find(query).exec();
   } catch (error) {
-    return newError(error.message, error.status ?? 500);
+    throw new Error(error);
   }
 };
 
@@ -315,7 +317,7 @@ const createAdminAccount = async (email, password, name, userName, phoneNumber) 
 
 const decideGiftCardTransanction = async (id, status) => {
   try {
-    const giftCard = await GiftCardTransactionModel.findOneAndUpdate(id, { status: status }, { new: true });
+    const giftCard = await GiftCardTransaction.findOneAndUpdate(id, { status: status }, { new: true });
     return giftCard;
   } catch (error) {
     return newError(error.message, 500);
@@ -324,7 +326,7 @@ const decideGiftCardTransanction = async (id, status) => {
 
 const decideWalletTransanction = async (id, status) => {
   try {
-    const walletTransanction = await WalletTransactionModel.findOneAndUpdate(
+    const walletTransanction = await WalletTransaction.findOneAndUpdate(
       id,
       { status: status },
       { new: true }
@@ -332,42 +334,6 @@ const decideWalletTransanction = async (id, status) => {
     return walletTransanction;
   } catch (error) {
     return newError(error.message, 500);
-  }
-};
-
-const allPendingGiftcardTransactions = async () => {
-  try {
-    const pendingTransactions = await GiftCardTransactionModel.find({ status: "processing" });
-    return pendingTransactions;
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
-  }
-};
-
-const allPendingWalletTransactions = async () => {
-  try {
-    const pendingTransactions = await WalletTransactionModel.find({ status: "processing" });
-    return pendingTransactions;
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
-  }
-};
-
-const allCompletedWalletTransactions = async () => {
-  try {
-    const completedTransactions = await WalletTransactionModel.find({ status: "completed" });
-    return completedTransactions;
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
-  }
-};
-
-const allCompletedGiftcardTransactions = async () => {
-  try {
-    const completedTransactions = await GiftCardTransactionModel.find({ status: "completed" });
-    return completedTransactions;
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
   }
 };
 
@@ -385,8 +351,4 @@ module.exports = {
   loginAdmin,
   decideGiftCardTransanction,
   decideWalletTransanction,
-  allPendingGiftcardTransactions,
-  allPendingWalletTransactions,
-  allCompletedGiftcardTransactions,
-  allCompletedWalletTransactions,
 };

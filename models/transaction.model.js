@@ -38,6 +38,7 @@ const GiftcardTransactionSchema = new mongoose.Schema(
       default: "processing",
     },
   },
+
   {
     timestamps: true,
   }

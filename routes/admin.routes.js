@@ -8,16 +8,11 @@ const {
   getAllUsersRefferals,
   uploadGiftCards,
   getGiftCardTransaction,
-  getAllGiftCardTransactions,
   getGiftcardTransactions,
   getWalletTransaction,
   getWalletTransactions,
   giftCardTransanctionDecision,
   walletTransanctionDecision,
-  getAllPendingGiftcardTransactions,
-  getAllPendingWalletTransactions,
-  getAllCompletedGiftcardTransactions,
-  getAllCompletedWalletTransactions,
 } = require("../controllers/admin.controller");
 const adminAuth = require("../middleware/admin-auth.middleware");
 
@@ -30,16 +25,12 @@ router.get("/dashboard", getDashBoard);
 router.get("/users", adminAuth, getUsers);
 router.get("/user/:id", adminAuth, getUser);
 router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
+router.get("/giftcard-transactions", adminAuth, getGiftcardTransactions);
+router.get("/wallet-transactions", adminAuth, getWalletTransactions);
 
-
-router.get("/pendinggiftcardtransactions", adminAuth, getAllPendingGiftcardTransactions);
-router.get("/pendingwallettransactions", adminAuth, getAllPendingWalletTransactions);
-router.get("/completedgiftcardtransactions", adminAuth, getAllCompletedGiftcardTransactions);
-router.get("/completedwallettransactions", adminAuth, getAllCompletedWalletTransactions);
 router.get("/giftcardtransaction/:id", adminAuth, getGiftCardTransaction);
-router.get("/giftcardtransactions", adminAuth, getGiftcardTransactions);
 router.get("/Wallettransaction/:id", adminAuth, getWalletTransaction);
-router.get("/Wallettransactions", adminAuth, getWalletTransactions);
+
 router.patch("decidegiftcardtransanction", adminAuth, giftCardTransanctionDecision);
 router.patch("decidewallettransanction", adminAuth, walletTransanctionDecision);
 router.post("/giftcard", uploadGiftCards);

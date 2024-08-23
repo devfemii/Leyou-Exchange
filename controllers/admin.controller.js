@@ -55,10 +55,13 @@ const getGiftCardTransaction = async (req, res) => {
 
 const getGiftcardTransactions = async (req, res) => {
   try {
-    const giftCardTransactions = await getAllGiftCardTransactions();
-    res.status(200).json(giftCardTransactions);
+    const giftCardTransactions = await getAllGiftCardTransactions({ ...req.query });
+    return res.status(200).json({
+      ...(giftCardTransactions.length > 0 && { totalGiftCardTransactions: giftCardTransactions.length }),
+      giftCardTransactions,
+    });
   } catch (error) {
-    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(error);
   }
 };
 
@@ -73,10 +76,13 @@ const getWalletTransaction = async (req, res) => {
 
 const getWalletTransactions = async (req, res) => {
   try {
-    const walletTransactions = await getAllWalletTransactions();
-    res.status(200).json(walletTransactions);
+    const walletTransactions = await getAllWalletTransactions({ ...req.query });
+    res.status(200).json({
+      ...(walletTransactions.length > 0 && { totalWalletTransactions: walletTransactions.length }),
+      walletTransactions,
+    });
   } catch (error) {
-    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(error);
   }
 };
 
@@ -162,42 +168,6 @@ const walletTransanctionDecision = async (req, res) => {
   }
 };
 
-const getAllPendingGiftcardTransactions = async (req, res) => {
-  try {
-    const pendingTransactions = await allPendingGiftcardTransactions();
-    res.status(200).json(pendingTransactions);
-  } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
-const getAllPendingWalletTransactions = async (req, res) => {
-  try {
-    const pendingTransactions = await allPendingWalletTransactions();
-    res.status(200).json(pendingTransactions);
-  } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
-const getAllCompletedWalletTransactions = async (req, res) => {
-  try {
-    const completedTransactions = await allCompletedWalletTransactions();
-    res.status(200).json(completedTransactions);
-  } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
-const getAllCompletedGiftcardTransactions = async (req, res) => {
-  try {
-    const completedTransactions = await allCompletedGiftcardTransactions();
-    res.status(200).json(completedTransactions);
-  } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
 const getAllUsersRefferals = async (req, res) => {
   let users = await User.find({ "referredUsers.0": { $exists: true } }).populate("referredUsers.user");
   let userReferrals = users.map((user) => ({
@@ -231,9 +201,5 @@ module.exports = {
   registerAdmin,
   giftCardTransanctionDecision,
   walletTransanctionDecision,
-  getAllPendingGiftcardTransactions,
-  getAllPendingWalletTransactions,
-  getAllCompletedGiftcardTransactions,
-  getAllCompletedWalletTransactions,
   getAllUsersRefferals,
 };

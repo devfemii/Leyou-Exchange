@@ -19,6 +19,7 @@ const transactionRouter = require("./routes/transaction.routes");
 const walletRouter = require("./routes/wallet.routes");
 const adminRouter = require("./routes/admin.routes");
 const ErrorHandlerMiddleWare = require("./middleware/error-handler");
+const NotFoundMiddleWare = require("./middleware/not-found");
 
 const app = express();
 const server = http.createServer(app);
@@ -38,8 +39,8 @@ app.use("/api/transactions", transactionRouter);
 app.use("/api/wallet", walletRouter);
 app.use("/api/admin", adminRouter);
 
-
 app.use(ErrorHandlerMiddleWare);
+app.use(NotFoundMiddleWare);
 
 io.on("connection", (socket) => {
   socket.on("chat message", (msg) => {
