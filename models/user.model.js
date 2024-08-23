@@ -82,8 +82,8 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
       },
-      isRegisteredSuccessfully: { type: Boolean },
-      hasMadeFirstTrade: { type: Boolean },
+      isRegisteredSuccessfully: { type: Boolean, default: false },
+      hasMadeFirstTrade: { type: Boolean, default: false },
     },
   ],
   referralTotalPoints: {

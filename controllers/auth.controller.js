@@ -54,7 +54,7 @@ const register = async (req, res) => {
       )
     );
   } catch (error) {
-    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(error);
   }
 };
 

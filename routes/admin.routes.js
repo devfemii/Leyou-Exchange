@@ -5,8 +5,7 @@ const {
   getDashBoard,
   registerAdmin,
   adminLogin,
-
-
+  getAllUsersRefferals,
 
   uploadGiftCards,
   getGiftCardTransaction,
@@ -20,7 +19,6 @@ const {
   getAllPendingWalletTransactions,
   getAllCompletedGiftcardTransactions,
   getAllCompletedWalletTransactions,
-  getAllUsersRefferals,
 } = require("../controllers/admin.controller");
 const adminAuth = require("../middleware/admin-auth.middleware");
 
@@ -31,14 +29,11 @@ router.post("/login", adminLogin);
 router.get("/dashboard", getDashBoard);
 router.get("/users", adminAuth, getUsers);
 router.get("/user/:id", adminAuth, getUser);
-
-
-
+router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
 
 
 
 router.post("/giftcard", uploadGiftCards);
-router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
 router.get("/pendinggiftcardtransactions", adminAuth, getAllPendingGiftcardTransactions);
 router.get("/pendingwallettransactions", adminAuth, getAllPendingWalletTransactions);
 router.get("/completedgiftcardtransactions", adminAuth, getAllCompletedGiftcardTransactions);

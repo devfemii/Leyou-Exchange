@@ -15,8 +15,12 @@ const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
 const imageValidatorMiddleware = require("../middleware/image.validation.middleware");
 
-router.patch("/balance/toggle-visibility", authMiddleware, toggleBalanceVisibility);
+//<--------- refactored routes start here --------->
 router.get("/chat/get-token", authMiddleware, getStreamToken);
+router.get("/referrals", authMiddleware, getReferralDetails);
+//<--------- refactored routes end here --------->
+router.patch("/balance/toggle-visibility", authMiddleware, toggleBalanceVisibility);
+
 router.get("/giftcards/rank", authMiddleware, rankGiftCards);
 router.get("/giftcards", authMiddleware, getGiftCards);
 router.get("/leaderboard", getLeaderBoard);
@@ -30,7 +34,6 @@ router.post(
   }
 );
 router.patch("/identity-verification", authMiddleware, verifyUserIdentity);
-router.get("/referrals", authMiddleware, getReferralDetails);
 
 router.delete("/", authMiddleware, deleteUserAccount);
 

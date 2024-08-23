@@ -1,9 +1,9 @@
 const User = require("../models/user.model");
 const { newError } = require("../utils");
 
-const existingUser = async (id) => {
+const existingUser = async (id, populatePath = "") => {
   try {
-    const existingUser = await User.findOne(id);
+    const existingUser = await User.findOne(id).populate(`${populatePath}`);
     return existingUser;
   } catch (error) {
     return newError(error.message, 500);
@@ -28,9 +28,7 @@ const deleteAccountFromDB = async (id) => {
 };
 
 const getUserReferral = async (id) => {
-  const users = await existingUser({ _id: id });
-  users.populate("referredUsers.user");
-
+  const users = await existingUser({ _id: id }, "referredUsers.user");
   return users.referredUsers;
 };
 
@@ -56,9 +54,7 @@ const checkIfEmailAndUsernameExist = async (email, userName) => {
 
 const getLeaderBoardFromDB = async () => {
   try {
-    const users = await User.find().populate(
-      "giftCardTransactionHistory.transaction"
-    );
+    const users = await User.find().populate("giftCardTransactionHistory.transaction");
 
     let getGiftCardsTotalTransaction = [];
     users.forEach((user) => {

@@ -371,15 +371,6 @@ const allCompletedGiftcardTransactions = async () => {
   }
 };
 
-const allUsersReferrals = async () => {
-  try {
-    const users = await User.find().populate("referredUsers.user");
-    return users;
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
-  }
-};
-
 module.exports = {
   saveGiftCard,
   findAllGiftCards,
@@ -398,5 +389,4 @@ module.exports = {
   allPendingWalletTransactions,
   allCompletedGiftcardTransactions,
   allCompletedWalletTransactions,
-  allUsersReferrals,
 };

@@ -18,7 +18,7 @@ const getStreamToken = async (req, res) => {
     const token = serverClient.createToken(userId);
     return res.status(200).json({ token });
   } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(error);
   }
 };
 const toggleBalanceVisibility = async (req, res) => {
@@ -64,11 +64,22 @@ const getLeaderBoard = async (req, res) => {
 };
 
 const getReferralDetails = async (req, res) => {
+  const { id: userId } = req.decoded;
   try {
-    const userReferral = await getUserReferral(req.decoded.id);
-    return res.status(200).json(sendSuccessMessage(userReferral, 200));
+    const userReferral = await getUserReferral(userId);
+    return res
+      .status(200)
+      .json(
+        sendSuccessMessage(
+          {
+            ...(userReferral.length > 0 && { numberOFReferrals: userReferral.length }),
+            referredUsers: userReferral,
+          },
+          200
+        )
+      );
   } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(error);
   }
 };
 

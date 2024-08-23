@@ -33,10 +33,10 @@ const GiftcardTransactionSchema = new mongoose.Schema(
       },
     ],
 
-    status:{
+    status: {
       type: String,
-      default: "processing"
-    }
+      default: "processing",
+    },
   },
   {
     timestamps: true,
@@ -64,23 +64,17 @@ const WalletTransactionSchema = new mongoose.Schema(
       },
     },
 
-    status:{
+    status: {
       type: String,
-      default: "processing"
-    }
+      default: "processing",
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const WalletTransactionModel = mongoose.model(
-  "wallet_transaction",
-  WalletTransactionSchema
-);
-const GiftCardTransactionModel = mongoose.model(
-  "giftcard_transaction",
-  GiftcardTransactionSchema
-);
+const WalletTransactionModel = mongoose.model("wallet_transaction", WalletTransactionSchema);
+const GiftCardTransactionModel = mongoose.model("giftcard_transaction", GiftcardTransactionSchema);
 
 module.exports = { GiftCardTransactionModel, WalletTransactionModel };

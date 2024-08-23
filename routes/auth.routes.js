@@ -13,14 +13,12 @@ const {
 
 const router = express.Router();
 
+//<--------- refactored routes start here --------->
 router.post("/register", register);
 router.post("/login", login);
-
+//<--------- refactored routes end here --------->
 router.post("/password/forget", forgetPassword);
-router.get(
-  "/verify-mail-password-reset/:signature",
-  verifiedEmailPasswordReset
-);
+router.get("/verify-mail-password-reset/:signature", verifiedEmailPasswordReset);
 router.post("/password/reset", updatePassword);
 router.post("/change-pin", changePin);
 

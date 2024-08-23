@@ -114,8 +114,31 @@ const adminLogin = async (req, res) => {
 };
 
 const getDashBoard = async (req, res) => {
-  const numberOfUsers = await User.countDocuments();
-  return res.status(StatusCodes.OK).json({ numberOfUsers });
+  const result = await User.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalUsers: { $sum: 1 },
+        totalReferrals: { $sum: { $size: "$referredUsers" } },
+      },
+    },
+    {
+      $lookup: {
+        from: "wallet_transactions",
+        localField: "_id",
+        foreignField: "userId",
+        as: "walletTransactions",
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        totalUsers: 1,
+        totalReferrals: 1,
+      },
+    },
+  ]);
+  return res.status(StatusCodes.OK).json(result);
 };
 const giftCardTransanctionDecision = async (req, res) => {
   try {
@@ -176,26 +199,20 @@ const getAllCompletedGiftcardTransactions = async (req, res) => {
 };
 
 const getAllUsersRefferals = async (req, res) => {
-  try {
-    const users = await allUsersReferrals();
-
-    const userReferrals = users.map((user) => ({
-      userId: user._id,
-      userName: user.userName,
-      email: user.email,
-      referrals: user.referredUsers.map((referral) => ({
-        userId: referral.user ? referral.user._id : null,
-        userName: referral.user ? referral.user.userName : null,
-        email: referral.user ? referral.user.email : null,
-        isRegisteredSuccessfully: referral.isRegisteredSuccessfully,
-        hasMadeFirstTrade: referral.hasMadeFirstTrade,
-      })),
-    }));
-
-    res.json(userReferrals.length);
-  } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
+  const userReferrals = await User.find({ "referredUsers.0": { $exists: true } }); //.populate("referredUsers");
+  return res.status(StatusCodes.OK).json({ totalReferrals: userReferrals.length });
+  // const userReferrals = users.map((user) => ({
+  //   userId: user._id,
+  //   userName: user.userName,
+  //   email: user.email,
+  //   referrals: user.referredUsers.map((referral) => ({
+  //     userId: referral.user ? referral.user._id : null,
+  //     userName: referral.user ? referral.user.userName : null,
+  //     email: referral.user ? referral.user.email : null,
+  //     isRegisteredSuccessfully: referral.isRegisteredSuccessfully,
+  //     hasMadeFirstTrade: referral.hasMadeFirstTrade,
+  //   })),
+  // }));
 };
 
 module.exports = {
