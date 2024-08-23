@@ -2,11 +2,12 @@ const User = require("../models/user.model");
 const { newError } = require("../utils");
 
 const existingUser = async (id, populatePath = "") => {
+  console.log(populatePath);
   try {
     const existingUser = await User.findOne(id).populate(`${populatePath}`);
     return existingUser;
   } catch (error) {
-    return newError(error.message, 500);
+    throw new Error(error);
   }
 };
 
@@ -23,7 +24,7 @@ const deleteAccountFromDB = async (id) => {
   try {
     await User.findOneAndDelete({ _id: id });
   } catch (error) {
-    return newError(error.message, 500);
+    throw new Error(error);
   }
 };
 
@@ -34,8 +35,6 @@ const getUserReferral = async (id) => {
 
 const checkIfEmailAndUsernameExist = async (email, userName) => {
   const users = await User.find();
-
-  // get the username and emails
   const userEmails = [];
   const userNames = [];
 

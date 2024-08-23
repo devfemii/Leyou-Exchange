@@ -63,21 +63,20 @@ const getLeaderBoard = async (req, res) => {
   }
 };
 
+//<---------Refactored Controllers ------->
 const getReferralDetails = async (req, res) => {
   const { id: userId } = req.decoded;
   try {
     const userReferral = await getUserReferral(userId);
-    return res
-      .status(200)
-      .json(
-        sendSuccessMessage(
-          {
-            ...(userReferral.length > 0 && { numberOFReferrals: userReferral.length }),
-            referredUsers: userReferral,
-          },
-          200
-        )
-      );
+    return res.status(200).json(
+      sendSuccessMessage(
+        {
+          ...(userReferral.length > 0 && { numberOFReferrals: userReferral.length }),
+          referredUsers: userReferral,
+        },
+        200
+      )
+    );
   } catch (error) {
     throw new Error(error);
   }
@@ -143,12 +142,12 @@ const updateUserProfile = async (req, res) => {
 };
 
 const deleteUserAccount = async (req, res) => {
+  const { id: userId } = req.decoded;
   try {
-    await deleteAccountFromDB(req.decoded.id);
-
+    await deleteAccountFromDB(userId);
     return res.status(200).json(sendSuccessMessage("Your account has been successfully deleted", 200));
   } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(Error);
   }
 };
 
