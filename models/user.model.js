@@ -64,6 +64,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide your phone number"],
   },
+  dateOfBirth: { type: String },
+  bankVerificationNumber: { type: Number },
   password: {
     type: String,
     required: [true, "Please provide your password"],

@@ -16,10 +16,11 @@ const updateUserAccount = async (id, payload) => {
     const updatedUser = await User.findOneAndUpdate(id, payload, { new: true });
     return updatedUser;
   } catch (error) {
-    return newError(error.message, 500);
+    throw new Error(error);
   }
 };
 
+//<---------- refactored codes -------->
 const deleteAccountFromDB = async (id) => {
   try {
     await User.findOneAndDelete({ _id: id });
@@ -27,7 +28,6 @@ const deleteAccountFromDB = async (id) => {
     throw new Error(error);
   }
 };
-
 const getUserReferral = async (id) => {
   const users = await existingUser({ _id: id }, "referredUsers.user");
   return users.referredUsers;

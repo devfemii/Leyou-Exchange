@@ -64,6 +64,15 @@ const getLeaderBoard = async (req, res) => {
 };
 
 //<---------Refactored Controllers ------->
+const deleteUserAccount = async (req, res) => {
+  const { id: userId } = req.decoded;
+  try {
+    await deleteAccountFromDB(userId);
+    return res.status(200).json(sendSuccessMessage("Your account has been successfully deleted", 200));
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 const getReferralDetails = async (req, res) => {
   const { id: userId } = req.decoded;
   try {
@@ -86,7 +95,6 @@ const verifyUserIdentity = async (req, res) => {
   const { dateOfBirth, bankVerificationNumber } = req.body;
   try {
     await updateUserAccount({ _id: req.decoded.id }, { dateOfBirth, bankVerificationNumber });
-
     return res
       .status(200)
       .json(
@@ -96,9 +104,11 @@ const verifyUserIdentity = async (req, res) => {
         )
       );
   } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(error);
   }
 };
+
+//<---------Refactored Controllers Ends here ------->
 
 const updateUserProfile = async (req, res) => {
   const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } = req.body;
@@ -138,16 +148,6 @@ const updateUserProfile = async (req, res) => {
     return res.status(200).json(sendSuccessMessage("You profile has been successfully updated", 200));
   } catch (error) {
     return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
-const deleteUserAccount = async (req, res) => {
-  const { id: userId } = req.decoded;
-  try {
-    await deleteAccountFromDB(userId);
-    return res.status(200).json(sendSuccessMessage("Your account has been successfully deleted", 200));
-  } catch (error) {
-    throw new Error(Error);
   }
 };
 

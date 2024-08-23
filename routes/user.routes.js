@@ -18,6 +18,7 @@ const imageValidatorMiddleware = require("../middleware/image.validation.middlew
 //<--------- refactored routes start here --------->
 router.get("/chat/get-token", authMiddleware, getStreamToken);
 router.get("/referrals", authMiddleware, getReferralDetails);
+router.patch("/identity-verification", authMiddleware, verifyUserIdentity);
 router.delete("/", authMiddleware, deleteUserAccount);
 //<--------- refactored routes end here --------->
 router.patch("/balance/toggle-visibility", authMiddleware, toggleBalanceVisibility);
@@ -34,6 +35,5 @@ router.post(
     res.status(400).send({ error: error.message });
   }
 );
-router.patch("/identity-verification", authMiddleware, verifyUserIdentity);
 
 module.exports = router;
