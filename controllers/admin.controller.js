@@ -199,20 +199,23 @@ const getAllCompletedGiftcardTransactions = async (req, res) => {
 };
 
 const getAllUsersRefferals = async (req, res) => {
-  const userReferrals = await User.find({ "referredUsers.0": { $exists: true } }); //.populate("referredUsers");
-  return res.status(StatusCodes.OK).json({ totalReferrals: userReferrals.length });
-  // const userReferrals = users.map((user) => ({
-  //   userId: user._id,
-  //   userName: user.userName,
-  //   email: user.email,
-  //   referrals: user.referredUsers.map((referral) => ({
-  //     userId: referral.user ? referral.user._id : null,
-  //     userName: referral.user ? referral.user.userName : null,
-  //     email: referral.user ? referral.user.email : null,
-  //     isRegisteredSuccessfully: referral.isRegisteredSuccessfully,
-  //     hasMadeFirstTrade: referral.hasMadeFirstTrade,
-  //   })),
-  // }));
+  let users = await User.find({ "referredUsers.0": { $exists: true } }).populate("referredUsers.user");
+  let userReferrals = users.map((user) => ({
+    userId: user._id,
+    userName: user.userName,
+    email: user.email,
+    referrals: user.referredUsers.map((referral) => ({
+      userId: referral.user ? referral.user._id : null,
+      userName: referral.user ? referral.user.userName : null,
+      email: referral.user ? referral.user.email : null,
+      isRegisteredSuccessfully: referral.isRegisteredSuccessfully,
+      hasMadeFirstTrade: referral.hasMadeFirstTrade,
+    })),
+  }));
+  const totalReferrals = userReferrals.reduce((acc, user) => {
+    return acc + user.referrals.length;
+  }, 0);
+  return res.status(StatusCodes.OK).json({ totalReferrals, referrals: userReferrals });
 };
 
 module.exports = {

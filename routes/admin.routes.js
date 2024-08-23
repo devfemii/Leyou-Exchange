@@ -6,7 +6,6 @@ const {
   registerAdmin,
   adminLogin,
   getAllUsersRefferals,
-
   uploadGiftCards,
   getGiftCardTransaction,
   getAllGiftCardTransactions,
@@ -24,6 +23,7 @@ const adminAuth = require("../middleware/admin-auth.middleware");
 
 const router = express.Router();
 
+//<---------- refactored routes ---------->
 router.post("/register", registerAdmin);
 router.post("/login", adminLogin);
 router.get("/dashboard", getDashBoard);
@@ -32,8 +32,6 @@ router.get("/user/:id", adminAuth, getUser);
 router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
 
 
-
-router.post("/giftcard", uploadGiftCards);
 router.get("/pendinggiftcardtransactions", adminAuth, getAllPendingGiftcardTransactions);
 router.get("/pendingwallettransactions", adminAuth, getAllPendingWalletTransactions);
 router.get("/completedgiftcardtransactions", adminAuth, getAllCompletedGiftcardTransactions);
@@ -44,5 +42,6 @@ router.get("/Wallettransaction/:id", adminAuth, getWalletTransaction);
 router.get("/Wallettransactions", adminAuth, getWalletTransactions);
 router.patch("decidegiftcardtransanction", adminAuth, giftCardTransanctionDecision);
 router.patch("decidewallettransanction", adminAuth, walletTransanctionDecision);
+router.post("/giftcard", uploadGiftCards);
 
 module.exports = router;
