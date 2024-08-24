@@ -1,6 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/user.model");
 const {
+  GiftCardTransactionModel: GiftCardTransaction,
+  WalletTransactionModel: WalletTransaction,
+} = require("../models/transaction.model");
+const {
   getSingleUser,
   getAllUsers,
   getSinglegiftCardTransaction,
@@ -10,11 +14,6 @@ const {
   loginAdmin,
   decideGiftCardTransanction,
   decideWalletTransanction,
-  allPendingGiftcardTransactions,
-  allPendingWalletTransactions,
-  allCompletedWalletTransactions,
-  allCompletedGiftcardTransactions,
-  allUsersReferrals,
 } = require("../services/admin.service");
 
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
@@ -52,7 +51,34 @@ const getGiftCardTransaction = async (req, res) => {
     return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
   }
 };
+const getAllTransactions = async (req, res) => {
+  let totalTransactions = [];
+  const totalGiftCardTransactions = await GiftCardTransaction.find({}).exec();
+  const totalWalletTransactions = await WalletTransaction.find({}).exec();
+  totalTransactions = totalTransactions.concat(totalGiftCardTransactions, totalWalletTransactions);
+  res.status(200).json({
+    ...(totalTransactions.length > 0 && { totalNumberOfTransactions: totalTransactions.length }),
+    totalTransactions,
+  });
+};
+const getTransaction = async (req, res) => {
+  const { transactionId } = req.params;
+  const { type } = req.query;
+  if (!transactionId) {
+    throw new Error("Please provide a transaction id");
+  }
+  if (type !== "giftcard" && type !== "wallet") {
+    throw new Error("Transaction type must be giftcard or wallet");
+  }
+  let transaction;
+  if (type === "giftcard") {
+    transaction = await GiftCardTransaction.find({ _id: transactionId }).exec();
+  }
 
+  // if(!transaction){
+  //   throw new Error("No transaction found ")
+  // }
+};
 const getGiftcardTransactions = async (req, res) => {
   try {
     const giftCardTransactions = await getAllGiftCardTransactions({ ...req.query });
@@ -197,6 +223,8 @@ module.exports = {
   getGiftcardTransactions,
   getWalletTransaction,
   getWalletTransactions,
+  getAllTransactions,
+  getTransaction,
   adminLogin,
   registerAdmin,
   giftCardTransanctionDecision,

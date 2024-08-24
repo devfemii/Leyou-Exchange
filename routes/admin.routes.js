@@ -8,9 +8,11 @@ const {
   getAllUsersRefferals,
   uploadGiftCards,
   getGiftCardTransaction,
+  getAllTransactions,
+  getTransaction,
   getGiftcardTransactions,
-  getWalletTransaction,
   getWalletTransactions,
+  getWalletTransaction,
   giftCardTransanctionDecision,
   walletTransanctionDecision,
 } = require("../controllers/admin.controller");
@@ -25,9 +27,10 @@ router.get("/dashboard", getDashBoard);
 router.get("/users", adminAuth, getUsers);
 router.get("/user/:id", adminAuth, getUser);
 router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
+router.get("/all-transactions", adminAuth, getAllTransactions);
 router.get("/giftcard-transactions", adminAuth, getGiftcardTransactions);
 router.get("/wallet-transactions", adminAuth, getWalletTransactions);
-
+router.get("/transaction/:transactionId", adminAuth, getTransaction);
 router.get("/giftcardtransaction/:id", adminAuth, getGiftCardTransaction);
 router.get("/Wallettransaction/:id", adminAuth, getWalletTransaction);
 

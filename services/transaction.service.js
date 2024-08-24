@@ -1,7 +1,5 @@
-const {
-  GiftCardTransactionModel,
-  WalletTransactionModel,
-} = require("../models/transaction.model");
+const { BadRequestError } = require("../errors");
+const { GiftCardTransactionModel, WalletTransactionModel } = require("../models/transaction.model");
 const User = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
 
@@ -25,7 +23,7 @@ const createGiftcardTransaction = async (
   });
 
   if (giftCardImages.length > 12) {
-    return newError("Too many files uploaded", 400);
+    throw new BadRequestError("Too many files uploaded");
   }
 
   try {
@@ -72,16 +70,11 @@ const createGiftcardTransaction = async (
 
     referree.save();
   } catch (error) {
-    return newError(error.message, error.status);
+    throw new Error(error);
   }
 };
 
-const createWalletTransaction = async (
-  userId,
-  transactionPin,
-  amount,
-  bankDetails
-) => {
+const createWalletTransaction = async (userId, transactionPin, amount, bankDetails) => {
   try {
     const wallet = await Wallet.findOne({ userId: userId });
 
@@ -90,10 +83,7 @@ const createWalletTransaction = async (
     }
 
     if (wallet.transactionPin != transactionPin) {
-      return newError(
-        "Incorrect PIN entered. If you have forgotten your PIN, click “Forgot PIN”",
-        400
-      );
+      return newError("Incorrect PIN entered. If you have forgotten your PIN, click “Forgot PIN”", 400);
     }
 
     const transaction = await WalletTransactionModel.create({
@@ -120,9 +110,7 @@ const createWalletTransaction = async (
 
 const getWalletTransactionHistory = async (userId) => {
   try {
-    const transactions = await User.findOne({ _id: userId }).populate(
-      "walletTransactionHistory.transaction"
-    );
+    const transactions = await User.findOne({ _id: userId }).populate("walletTransactionHistory.transaction");
 
     return transactions;
   } catch (error) {
