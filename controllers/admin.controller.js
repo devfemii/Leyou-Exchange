@@ -53,8 +53,11 @@ const getGiftCardTransaction = async (req, res) => {
 };
 const getAllTransactions = async (req, res) => {
   let totalTransactions = [];
-  const totalGiftCardTransactions = await GiftCardTransaction.find({}).exec();
-  const totalWalletTransactions = await WalletTransaction.find({}).exec();
+  const totalGiftCardTransactions = await GiftCardTransaction.find({})
+    .sort("-createdAt")
+    .populate("user")
+    .exec();
+  const totalWalletTransactions = await WalletTransaction.find({}).sort("-createdAt").populate("user").exec();
   totalTransactions = totalTransactions.concat(totalGiftCardTransactions, totalWalletTransactions);
   res.status(200).json({
     ...(totalTransactions.length > 0 && { totalNumberOfTransactions: totalTransactions.length }),

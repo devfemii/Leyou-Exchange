@@ -1,7 +1,7 @@
 const { BadRequestError } = require("../errors");
 const {
   GiftCardTransactionModel: GiftCardTransaction,
-  WalletTransactionModel,
+  WalletTransactionModel: WalletTransaction,
 } = require("../models/transaction.model");
 const User = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
@@ -74,7 +74,7 @@ const createGiftcardTransaction = async (
     referrer.referralTotalPoints = totalPoint.toString();
     referrer.referralPointsBalance = totalPointBalance.toString();
 
-    referrer.save();
+    await referrer.save();
   } catch (error) {
     throw new Error(error);
   }
@@ -92,9 +92,10 @@ const createWalletTransaction = async (userId, transactionPin, amount, bankDetai
       return newError("Incorrect PIN entered. If you have forgotten your PIN, click “Forgot PIN”", 400);
     }
 
-    const transaction = await WalletTransactionModel.create({
+    const transaction = await WalletTransaction.create({
       amount: amount,
       bankDetail: bankDetails,
+      user: userId,
     });
 
     await updateUserAccount(
@@ -110,7 +111,7 @@ const createWalletTransaction = async (userId, transactionPin, amount, bankDetai
       }
     );
   } catch (error) {
-    return newError(error.message, error.status);
+    throw new Error(error);
   }
 };
 

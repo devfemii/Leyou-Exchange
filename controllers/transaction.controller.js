@@ -16,7 +16,6 @@ const tradeGiftCard = async (req, res) => {
     if (req.files.length === 0) {
       throw new BadRequestError("Please upload an Image");
     }
-
     await createGiftcardTransaction(
       req.decoded.id,
       giftCardCategory,
@@ -75,7 +74,7 @@ const withdrawFunds = async (req, res) => {
       .status(200)
       .json(sendSuccessMessage("Your withdrawal request is now processing. We wll notify you shortly", 200));
   } catch (error) {
-    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(error);
   }
 };
 

@@ -236,7 +236,7 @@ const getSinglegiftCardTransaction = async (id) => {
 
 const getAllGiftCardTransactions = async (query) => {
   try {
-    return await GiftCardTransaction.find(query).exec();
+    return await GiftCardTransaction.find(query).sort("-createdAt").populate("user").exec();
   } catch (error) {
     throw new Error(error);
   }
@@ -258,7 +258,7 @@ const getSingleWalletTransaction = async (id) => {
 
 const getAllWalletTransactions = async (query) => {
   try {
-    return await WalletTransaction.find(query).exec();
+    return await WalletTransaction.find(query).sort("-createdAt").populate("user").exec();
   } catch (error) {
     throw new Error(error);
   }
