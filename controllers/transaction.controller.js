@@ -14,8 +14,7 @@ const tradeGiftCard = async (req, res) => {
   const { giftCardCategory, giftCardSubCategory, giftCardAmount, giftCardValue, comment } = req.body;
   try {
     if (req.files.length === 0) {
-      throw new BadRequestError("error here");
-      //return newError("Please upload a valid image file with either jpg, jpeg, png, or gif extension", 400);
+      throw new BadRequestError("Please upload an Image");
     }
 
     await createGiftcardTransaction(

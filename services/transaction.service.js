@@ -1,5 +1,8 @@
 const { BadRequestError } = require("../errors");
-const { GiftCardTransactionModel, WalletTransactionModel } = require("../models/transaction.model");
+const {
+  GiftCardTransactionModel: GiftCardTransaction,
+  WalletTransactionModel,
+} = require("../models/transaction.model");
 const User = require("../models/user.model");
 const Wallet = require("../models/wallet.model");
 
@@ -16,7 +19,6 @@ const createGiftcardTransaction = async (
   comment,
   giftCardImages
 ) => {
-  // store outside car photo in array
   let giftCards = [];
   giftCardImages.forEach((giftCardImage) => {
     giftCards.push(giftCardImage.buffer);
@@ -27,13 +29,14 @@ const createGiftcardTransaction = async (
   }
 
   try {
-    const transaction = await GiftCardTransactionModel.create({
+    const transaction = await GiftCardTransaction.create({
       giftCardCategory,
       giftCardSubCategory,
       giftCardAmount,
       giftCardValue,
       comment,
-      giftCards,
+      giftCardImages: giftCards,
+      user: userId,
     });
 
     await updateUserAccount(
@@ -49,26 +52,29 @@ const createGiftcardTransaction = async (
       }
     );
 
-    const referree = await existingUser({
+    const referrer = await existingUser({
       "referredUsers.user": userId,
     });
+    if (!referrer) {
+      return;
+    }
 
     // change the status of the referral
-    referree.referredUsers.forEach((referredUser) => {
+    referrer.referredUsers.forEach((referredUser) => {
       if (referredUser.user.toString() == userId.toString()) {
         referredUser.hasMadeFirstTrade = true;
       }
     });
 
     // add some point to the referral total point and balance
-    const totalPoint = Number(referree.referralTotalPoints) + 1;
-    const totalPointBalnce = Number(referree.referralPointsBalance) + 1;
+    const totalPoint = Number(referrer.referralTotalPoints) + 1;
+    const totalPointBalance = Number(referrer.referralPointsBalance) + 1;
 
     // update the user referral data
-    referree.referralTotalPoints = totalPoint.toString();
-    referree.referralPointsBalance = totalPointBalnce.toString();
+    referrer.referralTotalPoints = totalPoint.toString();
+    referrer.referralPointsBalance = totalPointBalance.toString();
 
-    referree.save();
+    referrer.save();
   } catch (error) {
     throw new Error(error);
   }

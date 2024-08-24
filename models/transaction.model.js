@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const GiftcardTransactionSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      default: null,
+    },
     giftCardCategory: {
       type: String,
       default: null,
@@ -46,6 +51,11 @@ const GiftcardTransactionSchema = new mongoose.Schema(
 
 const WalletTransactionSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      default: null,
+    },
     amount: {
       type: String,
       default: null,

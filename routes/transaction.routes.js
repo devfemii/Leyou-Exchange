@@ -12,7 +12,6 @@ const {
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
 const imageValidatorMiddleware = require("../middleware/image.validation.middleware");
-const { BadRequestError } = require("../errors");
 
 router.post(
   "/card/trade",
@@ -22,13 +21,10 @@ router.post(
 );
 
 router.get("/history", authMiddleware, transactionHistory);
-
 router.get("/wallet-transactions", authMiddleware, walletTransactionHistory);
 router.post("/withdraw-funds", authMiddleware, withdrawFunds);
-
 router.post("/send-otp", authMiddleware, recoverTransactionPin);
 router.post("/verify-otp", verifyOTP);
-
 router.patch("/change-transaction-pin", authMiddleware, changeTransactionPin);
 
 module.exports = router;
