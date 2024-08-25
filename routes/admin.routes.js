@@ -1,18 +1,15 @@
 const express = require("express");
 const {
+  adminLogin,
+  registerAdmin,
+  getDashBoard,
   getUsers,
   getUser,
-  getDashBoard,
-  registerAdmin,
-  adminLogin,
-  getAllUsersRefferals,
-  uploadGiftCards,
-  getGiftCardTransaction,
-  getAllTransactions,
+  getTransactions,
   getTransaction,
   getGiftcardTransactions,
   getWalletTransactions,
-  getWalletTransaction,
+  getAllUsersRefferals,
   giftCardTransanctionDecision,
   walletTransanctionDecision,
 } = require("../controllers/admin.controller");
@@ -26,16 +23,11 @@ router.post("/login", adminLogin);
 router.get("/dashboard", getDashBoard);
 router.get("/users", adminAuth, getUsers);
 router.get("/user/:id", adminAuth, getUser);
-router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
-router.get("/all-transactions", adminAuth, getAllTransactions);
-router.get("/giftcard-transactions", adminAuth, getGiftcardTransactions);
-router.get("/wallet-transactions", adminAuth, getWalletTransactions);
+router.get("/transactions", adminAuth, getTransactions);
 router.get("/transaction/:transactionId", adminAuth, getTransaction);
-router.get("/giftcardtransaction/:id", adminAuth, getGiftCardTransaction);
-router.get("/Wallettransaction/:id", adminAuth, getWalletTransaction);
+router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
 
 router.patch("decidegiftcardtransanction", adminAuth, giftCardTransanctionDecision);
 router.patch("decidewallettransanction", adminAuth, walletTransanctionDecision);
-router.post("/giftcard", uploadGiftCards);
 
 module.exports = router;

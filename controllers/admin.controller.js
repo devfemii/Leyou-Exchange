@@ -5,116 +5,28 @@ const {
   WalletTransactionModel: WalletTransaction,
 } = require("../models/transaction.model");
 const {
+  loginAdmin,
   getSingleUser,
   getAllUsers,
-  getSinglegiftCardTransaction,
   getAllGiftCardTransactions,
   getAllWalletTransactions,
   createAdminAccount,
-  loginAdmin,
   decideGiftCardTransanction,
   decideWalletTransanction,
 } = require("../services/admin.service");
 
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
+const { NotFoundError } = require("../errors");
 
-const uploadGiftCards = async (req, res) => {
-  const { giftCardImages, email, name, userName, phoneNumber, password } = req.body;
-
+const adminLogin = async (req, res) => {
+  const { email, password } = req.body;
   try {
-  } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
-const getUser = async (req, res) => {
-  const user = await getSingleUser(req.params.id);
-  if (user) {
-    res.status(StatusCodes.OK).json(user);
-  }
-};
-
-const getUsers = async (req, res) => {
-  try {
-    const users = await getAllUsers();
-    return res.status(200).json({ users, ...(users.length > 0 && { totalNumberOfUsers: users.length }) });
-  } catch (error) {
-    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
-const getGiftCardTransaction = async (req, res) => {
-  try {
-    const giftCardTransaction = await getSinglegiftCardTransaction(req.params.id);
-    res.status(200).json(giftCardTransaction);
-  } catch (error) {
-    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-const getAllTransactions = async (req, res) => {
-  let totalTransactions = [];
-  const totalGiftCardTransactions = await GiftCardTransaction.find({})
-    .sort("-createdAt")
-    .populate("user")
-    .exec();
-  const totalWalletTransactions = await WalletTransaction.find({}).sort("-createdAt").populate("user").exec();
-  totalTransactions = totalTransactions.concat(totalGiftCardTransactions, totalWalletTransactions);
-  res.status(200).json({
-    ...(totalTransactions.length > 0 && { totalNumberOfTransactions: totalTransactions.length }),
-    totalTransactions,
-  });
-};
-const getTransaction = async (req, res) => {
-  const { transactionId } = req.params;
-  const { type } = req.query;
-  if (!transactionId) {
-    throw new Error("Please provide a transaction id");
-  }
-  if (type !== "giftcard" && type !== "wallet") {
-    throw new Error("Transaction type must be giftcard or wallet");
-  }
-  let transaction;
-  if (type === "giftcard") {
-    transaction = await GiftCardTransaction.find({ _id: transactionId }).exec();
-  }
-
-  // if(!transaction){
-  //   throw new Error("No transaction found ")
-  // }
-};
-const getGiftcardTransactions = async (req, res) => {
-  try {
-    const giftCardTransactions = await getAllGiftCardTransactions({ ...req.query });
-    return res.status(200).json({
-      ...(giftCardTransactions.length > 0 && { totalGiftCardTransactions: giftCardTransactions.length }),
-      giftCardTransactions,
-    });
+    const response = await loginAdmin(email, password);
+    return res.status(200).json(response);
   } catch (error) {
     throw new Error(error);
   }
 };
-
-const getWalletTransaction = async (req, res) => {
-  try {
-    const walletTransaction = await get(req.params.id);
-    res.status(200).json(walletTransaction);
-  } catch (error) {
-    return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
-const getWalletTransactions = async (req, res) => {
-  try {
-    const walletTransactions = await getAllWalletTransactions({ ...req.query });
-    res.status(200).json({
-      ...(walletTransactions.length > 0 && { totalWalletTransactions: walletTransactions.length }),
-      walletTransactions,
-    });
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
 const registerAdmin = async (req, res) => {
   const { email, name, userName, phoneNumber, password } = req.body;
 
@@ -133,18 +45,6 @@ const registerAdmin = async (req, res) => {
     );
   } catch (error) {
     return res.status(error.status ?? 500).json(sendErrorMessage(error.message, error.status ?? 500));
-  }
-};
-
-const adminLogin = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const response = await loginAdmin(email, password);
-
-    return res.status(200).json(response);
-  } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status));
   }
 };
 
@@ -175,6 +75,79 @@ const getDashBoard = async (req, res) => {
   ]);
   return res.status(StatusCodes.OK).json(result);
 };
+const getUser = async (req, res) => {
+  const user = await getSingleUser(req.params.id);
+  if (user) {
+    res.status(StatusCodes.OK).json(user);
+  }
+};
+
+const getUsers = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    return res.status(200).json({ users, ...(users.length > 0 && { totalNumberOfUsers: users.length }) });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const getTransactions = async (req, res) => {
+  const { type, status } = req.query;
+  if (type && type !== "giftcard" && type !== "wallet") {
+    throw new Error("Transaction type must be giftcard or wallet");
+  }
+  if (status && status !== "processing" && status !== "completed") {
+    throw new Error("Transaction status can either be processing or completed");
+  }
+  let transactionName = type ? `${[type]}Transactions` : "transactions";
+  let transactions = [];
+
+  if (!type || type === "giftcard") {
+    const giftCardTransactions = await GiftCardTransaction.find(status ? { status } : {})
+      .sort("-createdAt")
+      .populate("user")
+      .exec();
+    transactions = transactions.concat(giftCardTransactions);
+  }
+  if (!type || type === "wallet") {
+    const walletTransactions = await WalletTransaction.find(status ? { status } : {})
+      .sort("-createdAt")
+      .populate("user")
+      .exec();
+    transactions = transactions.concat(walletTransactions);
+  }
+
+  return res.status(200).json({
+    ...(transactions.length > 0 && { totalNumberOfTransactions: transactions.length }),
+    [transactionName]: transactions,
+  });
+};
+
+const getTransaction = async (req, res) => {
+  const { transactionId } = req.params;
+  const { type } = req.query;
+  if (!transactionId) {
+    throw new Error("Please provide a transaction id");
+  }
+  if (type !== "giftcard" && type !== "wallet") {
+    throw new Error("Transaction type must be giftcard or wallet");
+  }
+  let transaction;
+  if (type === "giftcard") {
+    transaction = await GiftCardTransaction.find({ _id: transactionId }).populate("user").exec();
+  }
+  if (type === "wallet") {
+    transaction = await WalletTransaction.find({ _id: transactionId }).populate("user").exec();
+  }
+
+  if (transaction.length === 0) {
+    throw new NotFoundError(`No ${type} transaction for ${transactionId} found`);
+  }
+  return res.status(200).json({
+    transaction,
+  });
+};
+
 const giftCardTransanctionDecision = async (req, res) => {
   try {
     const { status } = req.body;
@@ -218,18 +191,13 @@ const getAllUsersRefferals = async (req, res) => {
 };
 
 module.exports = {
-  uploadGiftCards,
-  getUser,
-  getUsers,
-  getDashBoard,
-  getGiftCardTransaction,
-  getGiftcardTransactions,
-  getWalletTransaction,
-  getWalletTransactions,
-  getAllTransactions,
-  getTransaction,
   adminLogin,
   registerAdmin,
+  getDashBoard,
+  getUser,
+  getUsers,
+  getTransactions,
+  getTransaction,
   giftCardTransanctionDecision,
   walletTransanctionDecision,
   getAllUsersRefferals,

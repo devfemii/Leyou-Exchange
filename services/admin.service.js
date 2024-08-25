@@ -220,39 +220,11 @@ const getAllUsers = async () => {
   }
 };
 
-const getSinglegiftCardTransaction = async (id) => {
-  try {
-    const giftCard = await GiftCardTransaction.findById(id).exec();
-
-    if (!giftCard) {
-      return res.status(404).json(sendErrorMessage("This transaction does not exist", 404));
-    }
-
-    return giftCard;
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
-  }
-};
-
 const getAllGiftCardTransactions = async (query) => {
   try {
     return await GiftCardTransaction.find(query).sort("-createdAt").populate("user").exec();
   } catch (error) {
     throw new Error(error);
-  }
-};
-
-const getSingleWalletTransaction = async (id) => {
-  try {
-    const walletTransaction = await WalletTransaction.findById(id).exec();
-
-    if (!walletTransaction) {
-      return res.status(404).json(sendErrorMessage("This transaction does not exist", 404));
-    }
-
-    return walletTransaction;
-  } catch (error) {
-    return newError(error.message, error.status ?? 500);
   }
 };
 
@@ -343,9 +315,8 @@ module.exports = {
   rankGiftCardFromAdminsRate,
   getSingleUser,
   getAllUsers,
-  getSinglegiftCardTransaction,
   getAllGiftCardTransactions,
-  getSingleWalletTransaction,
+
   getAllWalletTransactions,
   createAdminAccount,
   loginAdmin,
