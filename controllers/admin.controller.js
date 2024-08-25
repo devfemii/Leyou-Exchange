@@ -92,12 +92,13 @@ const getUsers = async (req, res) => {
 };
 
 const getTransactions = async (req, res) => {
-  const { type, status } = req.query;
+  let { type, status } = req.query;
+
   if (type && type !== "giftcard" && type !== "wallet") {
     throw new Error("Transaction type must be giftcard or wallet");
   }
-  if (status && status !== "processing" && status !== "completed") {
-    throw new Error("Transaction status can either be processing or completed");
+  if (status && status !== "pending" && status !== "accepted" && status !== "declined") {
+    throw new Error("Transaction status can either be pending, accepted or declined");
   }
   let transactionName = type ? `${[type]}Transactions` : "transactions";
   let transactions = [];

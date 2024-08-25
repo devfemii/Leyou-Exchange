@@ -45,7 +45,7 @@ const createGiftcardTransaction = async (
         $push: {
           giftCardTransactionHistory: {
             transaction: transaction._id,
-            status: "processing",
+            status: "pending",
             tag: "sell_gift_card",
           },
         },
@@ -105,7 +105,7 @@ const createWalletTransaction = async (userId, transactionPin, amount, bankDetai
           walletTransactionHistory: {
             transaction: transaction._id,
             tag: "wallet_withdrawal",
-            status: "processing",
+            status: "pending",
           },
         },
       }
