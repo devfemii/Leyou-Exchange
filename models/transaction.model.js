@@ -40,7 +40,8 @@ const GiftcardTransactionSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      default: "processing",
+      default: "Pending",
+      enum: ["Pending", "Declined", "Accepted"],
     },
   },
 
@@ -74,10 +75,10 @@ const WalletTransactionSchema = new mongoose.Schema(
         default: null,
       },
     },
-
     status: {
       type: String,
       default: "processing",
+      enum: ["Pending", "Declined", "Accepted"],
     },
   },
   {
