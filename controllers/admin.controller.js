@@ -85,15 +85,23 @@ const getUser = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     const users = await getAllUsers();
-    return res.status(200).json({ users, ...(users.length > 0 && { totalNumberOfUsers: users.length }) });
+    return res.status(200).json({ ...(users.length > 0 && { totalNumberOfUsers: users.length }), users });
   } catch (error) {
     throw new Error(error);
   }
 };
 
 const getTransactions = async (req, res) => {
-  let { type, status } = req.query;
+  let { type, status, limit, skip = 0, sortBy = "createdAt", sortOrder = "desc" } = req.query;
 
+  let limitNumber;
+  let skipNumber;
+  if (limit) {
+    limitNumber = parseInt(limit);
+    skipNumber = parseInt(skip);
+  }
+  let sortCriteria = {};
+  sortCriteria[sortBy] = sortOrder === "desc" ? -1 : 1;
   if (type && type !== "giftcard" && type !== "wallet") {
     throw new Error("Transaction type must be giftcard or wallet");
   }
@@ -105,14 +113,18 @@ const getTransactions = async (req, res) => {
 
   if (!type || type === "giftcard") {
     const giftCardTransactions = await GiftCardTransaction.find(status ? { status } : {})
-      .sort("-createdAt")
+      .sort(sortCriteria)
+      .skip(skipNumber)
+      .limit(limitNumber)
       .populate("user")
       .exec();
     transactions = transactions.concat(giftCardTransactions);
   }
   if (!type || type === "wallet") {
     const walletTransactions = await WalletTransaction.find(status ? { status } : {})
-      .sort("-createdAt")
+      .sort(sortCriteria)
+      .skip(skipNumber)
+      .limit(limitNumber)
       .populate("user")
       .exec();
     transactions = transactions.concat(walletTransactions);

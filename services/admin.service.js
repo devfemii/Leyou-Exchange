@@ -212,6 +212,7 @@ const getAllUsers = async () => {
   try {
     return await User.find({})
       .select("-password")
+      .populate("referredUsers.user")
       .populate("giftCardTransactionHistory")
       .populate("walletTransactionHistory")
       .exec();
