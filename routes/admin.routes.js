@@ -8,8 +8,7 @@ const {
   getTransactions,
   getTransaction,
   getAllUsersRefferals,
-  giftCardTransanctionDecision,
-  walletTransanctionDecision,
+  updateTransaction,
 } = require("../controllers/admin.controller");
 const adminAuth = require("../middleware/admin-auth.middleware");
 
@@ -24,8 +23,6 @@ router.get("/user/:id", adminAuth, getUser);
 router.get("/transactions", adminAuth, getTransactions);
 router.get("/transaction/:transactionId", adminAuth, getTransaction);
 router.get("/numberofreferrals", adminAuth, getAllUsersRefferals);
-
-router.patch("decidegiftcardtransanction", adminAuth, giftCardTransanctionDecision);
-router.patch("decidewallettransanction", adminAuth, walletTransanctionDecision);
+router.patch("/update-transaction/:transactionId", adminAuth, updateTransaction);
 
 module.exports = router;

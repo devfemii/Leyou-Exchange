@@ -296,28 +296,6 @@ const createAdminAccount = async (email, password, name, userName, phoneNumber) 
   }
 };
 
-const decideGiftCardTransanction = async (id, status) => {
-  try {
-    const giftCard = await GiftCardTransaction.findOneAndUpdate(id, { status: status }, { new: true });
-    return giftCard;
-  } catch (error) {
-    return newError(error.message, 500);
-  }
-};
-
-const decideWalletTransanction = async (id, status) => {
-  try {
-    const walletTransanction = await WalletTransaction.findOneAndUpdate(
-      id,
-      { status: status },
-      { new: true }
-    );
-    return walletTransanction;
-  } catch (error) {
-    return newError(error.message, 500);
-  }
-};
-
 module.exports = {
   saveGiftCard,
   findAllGiftCards,
@@ -325,10 +303,7 @@ module.exports = {
   getSingleUser,
   getAllUsers,
   getAllGiftCardTransactions,
-
   getAllWalletTransactions,
   createAdminAccount,
   loginAdmin,
-  decideGiftCardTransanction,
-  decideWalletTransanction,
 };
