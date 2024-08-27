@@ -7,8 +7,6 @@ const {
   getUser,
   getTransactions,
   getTransaction,
-  getGiftcardTransactions,
-  getWalletTransactions,
   getAllUsersRefferals,
   giftCardTransanctionDecision,
   walletTransanctionDecision,

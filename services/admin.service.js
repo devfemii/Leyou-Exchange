@@ -208,16 +208,24 @@ const getSingleUser = async (id) => {
   return user;
 };
 
-const getAllUsers = async () => {
+const getAllUsers = async (query) => {
+  const { limit, skip = 0, sortBy = "createdAt", sortOrder = "desc" } = query;
+  const sortCriteria = {};
+  if (sortBy) {
+    sortCriteria[sortBy] = sortOrder === "desc" ? -1 : 1;
+  }
   try {
     return await User.find({})
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limit)
       .select("-password")
       .populate("referredUsers.user")
       .populate("giftCardTransactionHistory")
       .populate("walletTransactionHistory")
       .exec();
   } catch (error) {
-    return newError(error.message, error.status ?? 500);
+    throw new Error(error);
   }
 };
 

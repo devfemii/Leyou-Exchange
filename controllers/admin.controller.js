@@ -84,7 +84,7 @@ const getUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const users = await getAllUsers();
+    const users = await getAllUsers(req.query);
     return res.status(200).json({ ...(users.length > 0 && { totalNumberOfUsers: users.length }), users });
   } catch (error) {
     throw new Error(error);
