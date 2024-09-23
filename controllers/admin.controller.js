@@ -8,16 +8,11 @@ const {
   loginAdmin,
   getSingleUser,
   getAllUsers,
-  getAllGiftCardTransactions,
-  getAllWalletTransactions,
   createAdminAccount,
-  decideGiftCardTransanction,
-  decideWalletTransanction,
 } = require("../services/admin.service");
 
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 const { NotFoundError, BadRequestError } = require("../errors");
-const { updateUserAccount } = require("../services/user.service");
 
 const adminLogin = async (req, res) => {
   const { email, password } = req.body;
