@@ -13,12 +13,17 @@ const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
 const imageValidatorMiddleware = require("../middleware/image.validation.middleware");
 
+
+
+//<--------- refactored routes starts here ------->
 router.post(
   "/card/trade",
   authMiddleware,
   imageValidatorMiddleware.array("giftCardImages", 12),
   tradeGiftCard
 );
+//<-------- refactored routes ends here ------->
+
 
 router.get("/history", authMiddleware, transactionHistory);
 router.get("/wallet-transactions", authMiddleware, walletTransactionHistory);

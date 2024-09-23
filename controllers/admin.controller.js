@@ -17,6 +17,7 @@ const {
 
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 const { NotFoundError, BadRequestError } = require("../errors");
+const { updateUserAccount } = require("../services/user.service");
 
 const adminLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -186,14 +187,33 @@ const updateTransaction = async (req, res) => {
   if (!transaction) {
     throw new NotFoundError(`Transaction cannot be found`);
   }
-  if (transaction.status === status) {
-    throw new BadRequestError("Unable to update the transaction status because it remains unchanged");
-  }
+  // if (transaction.status === status) {
+  //   throw new BadRequestError("Unable to update the transaction status because it remains unchanged");
+  // }
   transaction = await (type === "giftcard" ? GiftCardTransaction : WalletTransaction).findByIdAndUpdate(
     transactionId,
     { status },
     { new: true }
   );
+
+  const txnId = transaction._id;
+  const userId = transaction.user;
+  const user = await User.findById(userId);
+  const transactionHistory =
+    type === "giftcard" ? user?.giftCardTransactionHistory : user?.walletTransactionHistory;
+  if (transactionHistory.length > 0) {
+    const transactionIndex = transactionHistory.findIndex(
+      (history) => history.transaction.toString() === txnId.toString()
+    );
+    if (transactionIndex !== -1) {
+      const transaction =
+        type === "giftcard"
+          ? user?.giftCardTransactionHistory[transactionIndex]
+          : user?.walletTransactionHistory[transactionIndex];
+      transaction.status = status;
+      await user.save();
+    }
+  }
 
   return res.status(201).json(sendSuccessMessage(transaction, 201));
 };
