@@ -51,6 +51,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide your email address"],
   },
+  profilePicture: {
+    type: Buffer,
+    default: null,
+  },
   name: {
     type: String,
     required: [true, "Please provide your  name"],

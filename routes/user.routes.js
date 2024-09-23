@@ -16,6 +16,12 @@ const authMiddleware = require("../middleware/auth.middleware");
 const imageValidatorMiddleware = require("../middleware/image.validation.middleware");
 
 //<--------- refactored routes start here --------->
+router.post(
+  "/profile/update",
+  authMiddleware,
+  imageValidatorMiddleware.single("profilePicture"),
+  updateUserProfile
+);
 router.get("/chat/get-token", authMiddleware, getStreamToken);
 router.get("/referrals", authMiddleware, getReferralDetails);
 router.patch("/identity-verification", authMiddleware, verifyUserIdentity);
@@ -26,14 +32,6 @@ router.patch("/balance/toggle-visibility", authMiddleware, toggleBalanceVisibili
 router.get("/giftcards/rank", authMiddleware, rankGiftCards);
 router.get("/giftcards", authMiddleware, getGiftCards);
 router.get("/leaderboard", getLeaderBoard);
-router.post(
-  "/profile/update",
-  authMiddleware,
-  imageValidatorMiddleware.single("profilePic"),
-  updateUserProfile,
-  (error, req, res, next) => {
-    res.status(400).send({ error: error.message });
-  }
-);
+
 
 module.exports = router;

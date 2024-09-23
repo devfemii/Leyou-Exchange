@@ -10,6 +10,7 @@ const {
 } = require("../services/user.service");
 const { findAllGiftCards, rankGiftCardFromAdminsRate } = require("../services/admin.service");
 const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
+const { BadRequestError } = require("../errors");
 
 const getStreamToken = async (req, res) => {
   const { id: userId } = req.decoded;
@@ -108,48 +109,25 @@ const verifyUserIdentity = async (req, res) => {
   }
 };
 
-//<---------Refactored Controllers Ends here ------->
-
 const updateUserProfile = async (req, res) => {
-  const { email, userName, phoneNumber, dateOfBirth, bankVerificationNumber } = req.body;
-
+  if (!req.file) {
+    throw new BadRequestError("Please provide a profile picture");
+  }
   try {
-    const user = await existingUser({ _id: req.decoded.id });
-
-    const checkIfDetaillExist = await checkIfEmailAndUsernameExist(user.email, user.userName);
-
-    const emails = checkIfDetaillExist.userEmails;
-    const userNames = checkIfDetaillExist.userNames;
-
-    emails.forEach((e) => {
-      if (e == email) {
-        return newError("Email already exist", 400);
-      }
-    });
-
-    userNames.forEach((u) => {
-      if (u == userName) {
-        return newError("UserName already exist", 400);
-      }
-    });
-
     await updateUserAccount(
       { _id: req.decoded.id },
       {
-        profilePic: req.file.buffer,
-        email,
-        userName,
-        phoneNumber,
-        dateOfBirth,
-        bankVerificationNumber,
+        profilePicture: req.file.buffer,
       }
     );
-
-    return res.status(200).json(sendSuccessMessage("You profile has been successfully updated", 200));
+    return res
+      .status(200)
+      .json(sendSuccessMessage("Your profile picture has been successfully updated", 200));
   } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status ?? 500));
+    throw new Error(error);
   }
 };
+//<---------Refactored Controllers Ends here ------->
 
 module.exports = {
   toggleBalanceVisibility,
