@@ -104,6 +104,10 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: null,
   },
+  FCMToken: {
+    type: String,
+    default: null,
+  },
   notifications: [
     {
       type: mongoose.Schema.Types.ObjectId,
