@@ -34,7 +34,7 @@ app.use(cors());
 //<---------- routes ---------->
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
-app.use("/api/notifications", notificationRouter);
+app.use("/api/notification", notificationRouter);
 app.use("/api/transactions", transactionRouter);
 app.use("/api/wallet", walletRouter);
 app.use("/api/admin", adminRouter);

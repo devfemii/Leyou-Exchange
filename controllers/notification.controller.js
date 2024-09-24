@@ -1,6 +1,8 @@
 const { getNotificationsByUserId } = require("../services/notification.service");
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 const User = require("../models/user.model");
+const FCMAdmin = require("../utils/firebase");
+const { BadRequestError } = require("../errors");
 const getNotifications = async (req, res) => {
   try {
     const notifications = await getNotificationsByUserId({
@@ -9,11 +11,10 @@ const getNotifications = async (req, res) => {
 
     return res.status(201).json(sendSuccessMessage(notifications, 201));
   } catch (error) {
-    return res.status(error.status).json(sendErrorMessage(error.message, error.status));
+    throw new Error(error);
   }
 };
 
-//<-------- save the FCM token ------>
 const saveFCMToken = async (req, res) => {
   const { FCMToken } = req.params;
   const userId = req.decoded.id;
@@ -25,7 +26,33 @@ const saveFCMToken = async (req, res) => {
   }
 };
 
+const sendPushNotification = async (req, res) => {
+  try {
+    const { title, body } = req.body;
+    if (!title || !body) {
+      throw new BadRequestError("Please provide Notification title or body");
+    }
+    const userId = req.decoded.id;
+    const user = await User.findById(userId);
+    if (!user.FCMToken) {
+      throw new BadRequestError("Please supply FCM token");
+    }
+    const message = {
+      token: user.FCMToken,
+      notification: {
+        title,
+        body,
+      },
+    };
+    const response = await FCMAdmin.messaging().send(message);
+    return res.status(200).json(sendSuccessMessage("Push notification sent", 200));
+  } catch (error) {
+    return res.status(400).json(sendErrorMessage(error, 400));
+  }
+};
+
 module.exports = {
   getNotifications,
   saveFCMToken,
+  sendPushNotification,
 };
