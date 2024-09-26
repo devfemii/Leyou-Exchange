@@ -141,10 +141,10 @@ const updateUserProfile = async (req, res) => {
       )
     );
   } catch (error) {
-    fs.unlinkSync(imagePath);
+    // fs.unlinkSync(imagePath);
     throw new BadRequestError("Image Upload failed");
   } finally {
-    fs.unlinkSync(imagePath);
+    // fs.unlinkSync(imagePath);
   }
 };
 //<---------Refactored Controllers Ends here ------->
