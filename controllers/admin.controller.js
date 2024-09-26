@@ -4,15 +4,13 @@ const {
   GiftCardTransactionModel: GiftCardTransaction,
   WalletTransactionModel: WalletTransaction,
 } = require("../models/transaction.model");
-const {
-  loginAdmin,
-  getSingleUser,
-  getAllUsers,
-  createAdminAccount,
-} = require("../services/admin.service");
+const { loginAdmin, getSingleUser, getAllUsers, createAdminAccount } = require("../services/admin.service");
 
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 const { NotFoundError, BadRequestError } = require("../errors");
+const sendPushNotification = require("../utils/sendPushNotification");
+const { fetchNotificationDetails } = require("../utils/notification");
+const Notification = require("../models/notification.model");
 
 const adminLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -158,59 +156,68 @@ const getTransaction = async (req, res) => {
 };
 
 const updateTransaction = async (req, res) => {
-  const { type } = req.query;
-  const { transactionId } = req.params;
-  const { status } = req.body;
-  if (!transactionId) {
-    throw new Error("Please provide Transaction Id");
-  }
-  if (!type) {
-    throw new Error("Please provide transaction type");
-  }
-  if (type !== "giftcard" && type !== "wallet") {
-    throw new Error("Transaction type must be giftcard or wallet");
-  }
-  if (!status) {
-    throw new Error("Please provide transaction status");
-  }
-  if (status !== "pending" && status !== "accepted" && status !== "declined") {
-    throw new Error("Transaction status can either be pending, accepted or declined");
-  }
-  let transaction = await (type === "giftcard" ? GiftCardTransaction : WalletTransaction).findById(
-    transactionId
-  );
-  if (!transaction) {
-    throw new NotFoundError(`Transaction cannot be found`);
-  }
-  // if (transaction.status === status) {
-  //   throw new BadRequestError("Unable to update the transaction status because it remains unchanged");
-  // }
-  transaction = await (type === "giftcard" ? GiftCardTransaction : WalletTransaction).findByIdAndUpdate(
-    transactionId,
-    { status },
-    { new: true }
-  );
-
-  const txnId = transaction._id;
-  const userId = transaction.user;
-  const user = await User.findById(userId);
-  const transactionHistory =
-    type === "giftcard" ? user?.giftCardTransactionHistory : user?.walletTransactionHistory;
-  if (transactionHistory.length > 0) {
-    const transactionIndex = transactionHistory.findIndex(
-      (history) => history.transaction.toString() === txnId.toString()
-    );
-    if (transactionIndex !== -1) {
-      const transaction =
-        type === "giftcard"
-          ? user?.giftCardTransactionHistory[transactionIndex]
-          : user?.walletTransactionHistory[transactionIndex];
-      transaction.status = status;
-      await user.save();
+  try {
+    const { type } = req.query;
+    const { transactionId } = req.params;
+    const { status } = req.body;
+    if (!transactionId) {
+      throw new Error("Please provide Transaction Id");
     }
-  }
+    if (!type) {
+      throw new Error("Please provide transaction type");
+    }
+    if (type !== "giftcard" && type !== "wallet") {
+      throw new Error("Transaction type must be giftcard or wallet");
+    }
+    if (!status) {
+      throw new Error("Please provide transaction status");
+    }
+    if (status !== "pending" && status !== "accepted" && status !== "declined") {
+      throw new Error("Transaction status can either be pending, accepted or declined");
+    }
+    let transaction = await (type === "giftcard" ? GiftCardTransaction : WalletTransaction).findById(
+      transactionId
+    );
+    if (!transaction) {
+      throw new NotFoundError(`Transaction cannot be found`);
+    }
+    //TODO if (transaction.status === status) {
+    //   throw new BadRequestError("Unable to update the transaction status because it remains unchanged");
+    // }
+    transaction = await (type === "giftcard" ? GiftCardTransaction : WalletTransaction)
+      .findByIdAndUpdate(transactionId, { status }, { new: true })
+      .populate("user");
 
-  return res.status(201).json(sendSuccessMessage(transaction, 201));
+    const txnId = transaction._id;
+    const userId = transaction.user;
+    const user = await User.findById(userId);
+    const transactionHistory =
+      type === "giftcard" ? user?.giftCardTransactionHistory : user?.walletTransactionHistory;
+    if (transactionHistory.length > 0) {
+      const transactionIndex = transactionHistory.findIndex(
+        (history) => history.transaction.toString() === txnId.toString()
+      );
+      if (transactionIndex !== -1) {
+        const transaction =
+          type === "giftcard"
+            ? user?.giftCardTransactionHistory[transactionIndex]
+            : user?.walletTransactionHistory[transactionIndex];
+        transaction.status = status;
+        await user.save();
+      }
+    }
+    //<------- SEND A PUSH NOTIFICATION TO THE USER DEVICE ------->
+    const notificationDetails = await fetchNotificationDetails("update-transaction", {
+      transactionStatus: transaction.status,
+    });
+    //<-------- save the notification to the database ------->
+    const notification = new Notification({ userId: user._id, ...notificationDetails });
+    await notification.save();
+    await sendPushNotification(user, notification);
+    res.status(201).json(sendSuccessMessage({ notification, transaction }, 201));
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 const getAllUsersRefferals = async (req, res) => {
