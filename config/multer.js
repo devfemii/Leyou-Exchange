@@ -1,16 +1,13 @@
 const multer = require("multer");
-const path = require("path");
 const fileFilter = (req, file, cb) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
     return cb(new Error("Please upload an image file with either jpg, jpeg, png or gif extension"));
   }
   cb(null, true);
 };
-const tempDir = path.join(__dirname, "data", "temp");
-console.log(tempDir);
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, tempDir);
+    cb(null, "data/temp");
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
