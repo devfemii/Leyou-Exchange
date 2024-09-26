@@ -5,10 +5,10 @@ const fileFilter = (req, file, cb) => {
   }
   cb(null, true);
 };
-
+const tempDir = path.join(__dirname, "data", "temp");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "data/temp");
+    cb(null, tempDir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
