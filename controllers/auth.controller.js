@@ -68,7 +68,7 @@ const login = async (req, res) => {
       sendSuccessMessage(
         {
           userDetails: {
-            ...response.user,
+            ...response.user._doc,
           },
           token: response.token,
         },
