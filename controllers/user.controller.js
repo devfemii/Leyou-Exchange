@@ -1,5 +1,5 @@
 const { StreamChat } = require("stream-chat");
-
+const fs = require("fs");
 const {
   updateUserAccount,
   checkIfEmailAndUsernameExist,
@@ -11,6 +11,7 @@ const {
 const { findAllGiftCards, rankGiftCardFromAdminsRate } = require("../services/admin.service");
 const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
 const { BadRequestError } = require("../errors");
+const cloudinary = require("../config/cloudinary");
 
 const getStreamToken = async (req, res) => {
   const { id: userId } = req.decoded;
@@ -113,11 +114,17 @@ const updateUserProfile = async (req, res) => {
   if (!req.file) {
     throw new BadRequestError("Please provide a profile picture");
   }
+  const imagePath = req.file.path;
   try {
+    const uploadFolder = "Leyou-Exchange/profilePicture";
+    const result = await cloudinary.uploader.upload(imagePath, {
+      folder: uploadFolder,
+      use_filename: true,
+    });
     const user = await updateUserAccount(
       { _id: req.decoded.id },
       {
-        profilePicture: req.file.buffer,
+        profilePicture: result.secure_url,
       }
     );
     return res.status(200).json({
@@ -127,7 +134,10 @@ const updateUserProfile = async (req, res) => {
       profilePicture: user.profilePicture,
     });
   } catch (error) {
-    throw new Error(error);
+    fs.unlinkSync(imagePath);
+    throw new BadRequestError("Image Upload failed");
+  } finally {
+    fs.unlinkSync(imagePath);
   }
 };
 //<---------Refactored Controllers Ends here ------->

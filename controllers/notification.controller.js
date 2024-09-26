@@ -1,7 +1,7 @@
 const { getNotificationsByUserId } = require("../services/notification.service");
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 const User = require("../models/user.model");
-const FCMAdmin = require("../utils/firebase");
+const FCMAdmin = require("../config/firebase");
 const { BadRequestError } = require("../errors");
 const getNotifications = async (req, res) => {
   try {
