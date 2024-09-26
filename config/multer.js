@@ -6,7 +6,7 @@ const fileFilter = (req, file, cb) => {
   }
   cb(null, true);
 };
-const tempDir = path.resolve("data", "temp");
+const tempDir = path.join(__dirname, "data", "temp");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, tempDir);
