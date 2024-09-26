@@ -1,12 +1,18 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 const fileFilter = (req, file, cb) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
     return cb(new Error("Please upload an image file with either jpg, jpeg, png or gif extension"));
   }
   cb(null, true);
 };
-const tempDir = path.join(__dirname, "data", "temp");
+
+const tempDir = path.resolve("data", "temp");
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, tempDir);
