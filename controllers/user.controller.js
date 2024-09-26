@@ -114,15 +114,18 @@ const updateUserProfile = async (req, res) => {
     throw new BadRequestError("Please provide a profile picture");
   }
   try {
-    await updateUserAccount(
+    const user = await updateUserAccount(
       { _id: req.decoded.id },
       {
         profilePicture: req.file.buffer,
       }
     );
-    return res
-      .status(200)
-      .json(sendSuccessMessage("Your profile picture has been successfully updated", 200));
+    return res.status(200).json({
+      status: "SUCCESS",
+      code: 200,
+      message: "Your profile picture has been successfully updated",
+      profilePicture: user.profilePicture,
+    });
   } catch (error) {
     throw new Error(error);
   }

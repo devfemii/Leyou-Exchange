@@ -10,7 +10,7 @@ const ErrorHandlerMiddleWare = (error, req, res, next) => {
     customError.message = `Invalid ${error.path}: '${error.value}' is not a valid ${error.kind}.`;
     customError.code = StatusCodes.BAD_REQUEST;
   }
-  return res.status(500).json({ status: "ERROR", ...customError });
+  return res.status(customError.code).json({ status: "ERROR", ...customError });
 };
 
 module.exports = ErrorHandlerMiddleWare;

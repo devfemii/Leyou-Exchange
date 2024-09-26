@@ -14,7 +14,6 @@ const existingUser = async (id, populatePath = "") => {
 const updateUserAccount = async (id, payload) => {
   try {
     const updatedUser = await User.findOneAndUpdate(id, payload, { new: true });
-    console.log(updatedUser);
     return updatedUser;
   } catch (error) {
     throw new Error(error);

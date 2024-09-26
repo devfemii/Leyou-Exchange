@@ -28,7 +28,6 @@ router.patch("/identity-verification", authMiddleware, verifyUserIdentity);
 router.delete("/", authMiddleware, deleteUserAccount);
 //<--------- refactored routes end here --------->
 router.patch("/balance/toggle-visibility", authMiddleware, toggleBalanceVisibility);
-
 router.get("/giftcards/rank", authMiddleware, rankGiftCards);
 router.get("/giftcards", authMiddleware, getGiftCards);
 router.get("/leaderboard", getLeaderBoard);
