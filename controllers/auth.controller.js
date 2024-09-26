@@ -68,12 +68,7 @@ const login = async (req, res) => {
       sendSuccessMessage(
         {
           userDetails: {
-            name: response.user.name,
-            email: response.user.email,
-            tradeWith: response.user.tradeWith,
-            userName: response.user.userName,
-            phoneNumber: response.user.phoneNumber,
-            referralCode: response.user.referralCode,
+            ...response.user,
           },
           token: response.token,
         },
