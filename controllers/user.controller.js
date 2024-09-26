@@ -12,6 +12,7 @@ const { findAllGiftCards, rankGiftCardFromAdminsRate } = require("../services/ad
 const { sendErrorMessage, sendSuccessMessage, newError } = require("../utils");
 const { BadRequestError } = require("../errors");
 const cloudinary = require("../config/cloudinary");
+const { StatusCodes } = require("http-status-codes");
 
 const getStreamToken = async (req, res) => {
   const { id: userId } = req.decoded;
@@ -127,12 +128,18 @@ const updateUserProfile = async (req, res) => {
         profilePicture: result.secure_url,
       }
     );
-    return res.status(200).json({
-      status: "SUCCESS",
-      code: 200,
-      message: "Your profile picture has been successfully updated",
-      profilePicture: user.profilePicture,
-    });
+
+    return res.status(StatusCodes.OK).json(
+      sendSuccessMessage(
+        {
+          userDetails: {
+            profilePicture: user.profilePicture,
+            ...user._doc,
+          },
+        },
+        StatusCodes.OK
+      )
+    );
   } catch (error) {
     fs.unlinkSync(imagePath);
     throw new BadRequestError("Image Upload failed");
