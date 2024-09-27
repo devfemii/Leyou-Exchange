@@ -1,3 +1,5 @@
+const cloudinary = require("../config/cloudinary");
+const fs = require("fs");
 const { BadRequestError } = require("../errors");
 const {
   GiftCardTransactionModel: GiftCardTransaction,
@@ -19,16 +21,18 @@ const createGiftcardTransaction = async (
   comment,
   giftCardImages
 ) => {
-  let giftCards = [];
-  giftCardImages.forEach((giftCardImage) => {
-    giftCards.push(giftCardImage.buffer);
-  });
-
-  if (giftCardImages.length > 12) {
-    throw new BadRequestError("Too many files uploaded");
-  }
-
   try {
+    let giftCards = [];
+    for (let index = 0; index < giftCardImages.length; index++) {
+      const imagePath = giftCardImages[index].path;
+      const uploadFolder = "Leyou-Exchange/giftCardImages";
+      const result = await cloudinary.uploader.upload(imagePath, {
+        folder: uploadFolder,
+        use_filename: true,
+      });
+      giftCards.push(result.secure_url);
+    }
+    return;
     const transaction = await GiftCardTransaction.create({
       giftCardCategory,
       giftCardSubCategory,
@@ -77,6 +81,11 @@ const createGiftcardTransaction = async (
     await referrer.save();
   } catch (error) {
     throw new Error(error);
+  } finally {
+    for (let index = 0; index < giftCardImages.length; index++) {
+      const imagePath = giftCardImages[index].path;
+      fs.unlinkSync(imagePath);
+    }
   }
 };
 
