@@ -2,6 +2,9 @@ const FCMAdmin = require("../config/firebase");
 const { BadRequestError } = require("../errors");
 const sendPushNotification = async (user, notification) => {
   try {
+    if (!title || !body) {
+      throw new BadRequestError("Please provide Notification title and body");
+    }
     if (!user.FCMToken) {
       throw new BadRequestError("Please supply FCM token");
     }

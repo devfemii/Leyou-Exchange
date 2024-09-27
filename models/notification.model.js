@@ -5,6 +5,7 @@ const NotificationSchema = new mongoose.Schema(
       type: String,
       default: "general",
       enum: ["general", "update", "activity"],
+      required: true,
     },
     tag: {
       type: String,

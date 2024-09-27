@@ -1,12 +1,13 @@
+//<-------- import modules -------->
 const express = require("express");
 const router = express.Router();
-
-//<-------- import modules -------->
 const authMiddleware = require("../middleware/auth.middleware");
+const adminAuthMiddleware = require("../middleware/admin-auth.middleware");
 const {
   getNotifications,
   updateNotification,
   saveFCMToken,
+  sendNotificationToUser,
 } = require("../controllers/notification.controller");
 const sendPushNotification = require("../utils/sendPushNotification");
 const { sendSuccessMessage } = require("../utils");
@@ -15,6 +16,7 @@ const { sendSuccessMessage } = require("../utils");
 router.get("/", authMiddleware, getNotifications);
 router.post("/update-notification/:notificationId", authMiddleware, updateNotification);
 router.post("/save-fcm-token", authMiddleware, saveFCMToken);
+router.post("/send/:userId", adminAuthMiddleware, sendNotificationToUser); //route for sending notification to a single user
 
 //<-------- endpoint for testing of push notification-------->
 router.post("/send-push-notification", async (req, res) => {

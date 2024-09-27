@@ -181,9 +181,13 @@ const updateTransaction = async (req, res) => {
     if (!transaction) {
       throw new NotFoundError(`Transaction cannot be found`);
     }
-    //TODO if (transaction.status === status) {
-    //   throw new BadRequestError("Unable to update the transaction status because it remains unchanged");
-    // }
+    if (transaction.status === status) {
+      return res
+        .status(200)
+        .json(
+          sendSuccessMessage("Unable to update the transaction status because it remains unchanged", 200)
+        );
+    }
     transaction = await (type === "giftcard" ? GiftCardTransaction : WalletTransaction)
       .findByIdAndUpdate(transactionId, { status }, { new: true })
       .populate("user");
