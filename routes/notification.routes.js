@@ -19,15 +19,10 @@ router.get("/", authMiddleware, getNotifications);
 router.post("/update-notification/:notificationId", authMiddleware, updateNotification);
 router.post("/save-fcm-token", authMiddleware, saveFCMToken);
 
-//<-------- test -------->
+//<-------- endpoint for testing of push notification-------->
 router.post("/send-push-notification", authMiddleware, async (req, res) => {
-  const user = await User.findById(req.decoded.id);
-  //<------- SEND A PUSH NOTIFICATION TO THE USER DEVICE ------->
-  const notificationDetails = await fetchNotificationDetails("test", {});
-  //<-------- save the notification to the database ------->
-  const notification = new Notification({ userId: user._id, ...notificationDetails });
-  await notification.save();
-  await sendPushNotification(user, notification);
+  const { FCMToken, title, body } = req.body;
+  await sendPushNotification({ FCMToken }, { title, body });
   res.status(201).json(sendSuccessMessage("Push notification sent", 201));
 });
 module.exports = router;
