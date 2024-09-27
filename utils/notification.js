@@ -1,6 +1,10 @@
 module.exports.fetchNotificationDetails = async (type, options) => {
   let title = "";
   let body = "";
+  if (type === "test") {
+    title = "Test Notification";
+    body = "This is a test notification";
+  }
   if (type === "update-transaction") {
     if (options?.transactionStatus) {
       const status = options?.transactionStatus;
