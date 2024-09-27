@@ -1,3 +1,5 @@
+const sendPushNotification = require("./sendPushNotification");
+
 module.exports.fetchNotificationDetails = async (type, options) => {
   let title = "";
   let body = "";
@@ -24,4 +26,15 @@ module.exports.fetchNotificationDetails = async (type, options) => {
     }
   }
   return { title, body };
+};
+
+//<------- This controller is responsible for saving notification to database and sending as push notification -------->
+module.exports.sendNotification = async (user, { type, tag, title, body }) => {
+  if (!title || !body) {
+    throw new BadRequestError("Please provide Notification title and body");
+  }
+  const notification = new Notification({ userId: user._id, type, tag, title, body });
+  await notification.save();
+  await sendPushNotification(user, notification);
+  return notification;
 };

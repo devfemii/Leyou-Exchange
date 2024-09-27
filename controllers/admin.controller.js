@@ -9,7 +9,7 @@ const { loginAdmin, getSingleUser, getAllUsers, createAdminAccount } = require("
 const { sendErrorMessage, sendSuccessMessage } = require("../utils");
 const { NotFoundError, BadRequestError } = require("../errors");
 const sendPushNotification = require("../utils/sendPushNotification");
-const { fetchNotificationDetails } = require("../utils/notification");
+const { fetchNotificationDetails, sendNotification } = require("../utils/notification");
 const Notification = require("../models/notification.model");
 
 const adminLogin = async (req, res) => {
@@ -161,7 +161,7 @@ const updateTransaction = async (req, res) => {
     const { transactionId } = req.params;
     const { status } = req.body;
     if (!transactionId) {
-      throw new Error("Please provide Transaction Id");
+      throw new Error("Please provide Transaction id");
     }
     if (!type) {
       throw new Error("Please provide transaction type");
@@ -210,14 +210,14 @@ const updateTransaction = async (req, res) => {
         await user.save();
       }
     }
-    //<------- SEND A PUSH NOTIFICATION TO THE USER DEVICE ------->
     const notificationDetails = await fetchNotificationDetails("update-transaction", {
       transactionStatus: transaction.status,
     });
-    //<-------- save the notification to the database ------->
-    const notification = new Notification({ userId: user._id, ...notificationDetails });
-    await notification.save();
-    await sendPushNotification(user, notification);
+    const notification = await sendNotification(user, {
+      ...notificationDetails,
+      type: "activity",
+      tag: "transaction_approved",
+    });
     res.status(201).json(sendSuccessMessage({ notification, transaction }, 201));
   } catch (error) {
     throw new Error(error);
