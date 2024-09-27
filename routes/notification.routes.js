@@ -8,11 +8,8 @@ const {
   updateNotification,
   saveFCMToken,
 } = require("../controllers/notification.controller");
-const { fetchNotificationDetails } = require("../utils/notification");
 const sendPushNotification = require("../utils/sendPushNotification");
 const { sendSuccessMessage } = require("../utils");
-const Notification = require("../models/notification.model");
-const User = require("../models/user.model");
 
 //<------- routes -------->
 router.get("/", authMiddleware, getNotifications);
