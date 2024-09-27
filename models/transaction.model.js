@@ -31,12 +31,10 @@ const GiftcardTransactionSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    giftCardImages: [
-      {
-        type: Buffer,
-        default: [],
-      },
-    ],
+    giftCardImages: {
+      type: Array,
+      default: [],
+    },
 
     status: {
       type: String,

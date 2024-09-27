@@ -21,18 +21,26 @@ const createGiftcardTransaction = async (
   comment,
   giftCardImages
 ) => {
-  try {
-    let giftCards = [];
-    for (let index = 0; index < giftCardImages.length; index++) {
-      const imagePath = giftCardImages[index].path;
+  let giftCards = [];
+  for (let index = 0; index < giftCardImages.length; index++) {
+    const imagePath = giftCardImages[index].path;
+    try {
       const uploadFolder = "Leyou-Exchange/giftCardImages";
       const result = await cloudinary.uploader.upload(imagePath, {
         folder: uploadFolder,
         use_filename: true,
       });
       giftCards.push(result.secure_url);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      fs.unlinkSync(imagePath);
     }
-    return;
+  }
+  if (giftCards.length === 0) {
+    throw new BadRequestError("No Giftcard images were uploaded");
+  }
+  try {
     const transaction = await GiftCardTransaction.create({
       giftCardCategory,
       giftCardSubCategory,
@@ -81,11 +89,6 @@ const createGiftcardTransaction = async (
     await referrer.save();
   } catch (error) {
     throw new Error(error);
-  } finally {
-    for (let index = 0; index < giftCardImages.length; index++) {
-      const imagePath = giftCardImages[index].path;
-      fs.unlinkSync(imagePath);
-    }
   }
 };
 
