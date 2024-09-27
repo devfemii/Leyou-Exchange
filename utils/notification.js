@@ -1,3 +1,4 @@
+const Notification = require("../models/notification.model");
 const sendPushNotification = require("./sendPushNotification");
 
 module.exports.fetchNotificationDetails = async (type, options) => {

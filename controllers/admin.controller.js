@@ -218,7 +218,7 @@ const updateTransaction = async (req, res) => {
       type: "activity",
       tag: "transaction_approved",
     });
-    res.status(201).json(sendSuccessMessage({ notification, transaction }, 201));
+    res.status(201).json(sendSuccessMessage({ notification }, 201));
   } catch (error) {
     throw new Error(error);
   }
