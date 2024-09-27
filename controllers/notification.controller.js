@@ -76,8 +76,22 @@ const sendNotificationToUser = async (req, res) => {
   return res.status(200).json(sendSuccessMessage("Notification has been sent to user", 200));
 };
 
+const sendNotificationToAllUsers = async (req, res) => {
+  const users = await User.find().exec();
+  if (!users) {
+    return res
+      .status(200)
+      .json(sendSuccessMessage("No users available on the platform to receive the notification", 200));
+  }
+  for (let index = 0; index < users.length; index++) {
+    let user = users[index];
+    await sendNotification(user, { ...req.body });
+  }
+  return res.status(201).json(sendSuccessMessage("Broadcast Notification delivered successfully", 201));
+};
 module.exports = {
   sendNotificationToUser,
+  sendNotificationToAllUsers,
   getNotifications,
   updateNotification,
   saveFCMToken,

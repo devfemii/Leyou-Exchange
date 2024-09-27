@@ -8,6 +8,7 @@ const {
   updateNotification,
   saveFCMToken,
   sendNotificationToUser,
+  sendNotificationToAllUsers,
 } = require("../controllers/notification.controller");
 const sendPushNotification = require("../utils/sendPushNotification");
 const { sendSuccessMessage } = require("../utils");
@@ -17,6 +18,7 @@ router.get("/", authMiddleware, getNotifications);
 router.post("/update-notification/:notificationId", authMiddleware, updateNotification);
 router.post("/save-fcm-token", authMiddleware, saveFCMToken);
 router.post("/send/:userId", adminAuthMiddleware, sendNotificationToUser); //route for sending notification to a single user
+router.post("/broadcast", adminAuthMiddleware, sendNotificationToAllUsers); //route for sending notification to all users
 
 //<-------- endpoint for testing of push notification-------->
 router.post("/send-push-notification", async (req, res) => {

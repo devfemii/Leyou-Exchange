@@ -1,3 +1,4 @@
+const { BadRequestError } = require("../errors");
 const Notification = require("../models/notification.model");
 const sendPushNotification = require("./sendPushNotification");
 

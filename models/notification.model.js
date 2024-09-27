@@ -10,7 +10,7 @@ const NotificationSchema = new mongoose.Schema(
     tag: {
       type: String,
       default: null,
-      enum: ["transaction_approved", "transaction_rejected"],
+      enum: ["transaction_approved", "transaction_rejected", "transaction_pending"],
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
