@@ -22,7 +22,7 @@ router.post("/save-fcm-token", authMiddleware, saveFCMToken);
 //<-------- endpoint for testing of push notification-------->
 router.post("/send-push-notification", authMiddleware, async (req, res) => {
   const { FCMToken, title, body } = req.body;
-  await sendPushNotification({ FCMToken }, { title, body });
-  res.status(201).json(sendSuccessMessage("Push notification sent", 201));
+  const response = await sendPushNotification({ FCMToken }, { title, body });
+  res.status(201).json(sendSuccessMessage({ message: "Push notification sent", response }, 201));
 });
 module.exports = router;

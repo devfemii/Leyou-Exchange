@@ -13,9 +13,9 @@ const sendPushNotification = async (user, notification) => {
       },
     };
     const response = await FCMAdmin.messaging().send(message);
-    console.log(response);
+    return response;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 
