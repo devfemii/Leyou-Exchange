@@ -116,7 +116,6 @@ const updateUserProfile = async (req, res) => {
     throw new BadRequestError("Please provide a profile picture");
   }
   const imagePath = req.file.path;
-  console.log(imagePath);
   try {
     const uploadFolder = "Leyou-Exchange/profilePicture";
     const result = await cloudinary.uploader.upload(imagePath, {

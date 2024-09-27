@@ -5,11 +5,13 @@ const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
 const {
   getNotifications,
+  updateNotification,
   saveFCMToken,
 } = require("../controllers/notification.controller");
 
 //<------- routes -------->
 router.get("/", authMiddleware, getNotifications);
-router.post("/save-fcm-token/:FCMToken", authMiddleware, saveFCMToken);
+router.post("/update-notification/:notificationId", authMiddleware, updateNotification);
+router.post("/save-fcm-token", authMiddleware, saveFCMToken);
 
 module.exports = router;

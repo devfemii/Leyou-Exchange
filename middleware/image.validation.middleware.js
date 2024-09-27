@@ -1,9 +1,14 @@
 const multer = require("multer");
-const { fileFilter, storage } = require("../config/multer");
+const { storage, fileFilter, giftCardFileFilter } = require("../config/multer");
 
-const validateImage = multer({
+const uploadImage = multer({
   fileFilter,
   storage,
 });
 
-module.exports = validateImage;
+const uploadGiftCardImages = multer({
+  storage,
+  fileFilter: giftCardFileFilter,
+}).array("giftCardImages");
+
+module.exports = { uploadImage, uploadGiftCardImages };

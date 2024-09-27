@@ -10,6 +10,9 @@ const ErrorHandlerMiddleWare = (error, req, res, next) => {
     customError.message = `Invalid ${error.path}: '${error.value}' is not a valid ${error.kind}.`;
     customError.code = StatusCodes.BAD_REQUEST;
   }
+  // if (error.code === "LIMIT_UNEXPECTED_FILE") {
+  //   customError.message = "Please upload less than the required number of files";
+  // }
   return res.status(customError.code).json({ status: "ERROR", ...customError });
 };
 

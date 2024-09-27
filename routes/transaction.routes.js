@@ -11,15 +11,10 @@ const {
 
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
-const imageValidatorMiddleware = require("../middleware/image.validation.middleware");
+const { uploadGiftCardImages } = require("../middleware/image.validation.middleware");
 
 //<--------- refactored routes starts here ------->
-router.post(
-  "/card/trade",
-  authMiddleware,
-  imageValidatorMiddleware.array("giftCardImages", 1), // 12),
-  tradeGiftCard
-);
+router.post("/card/trade", authMiddleware, uploadGiftCardImages, tradeGiftCard);
 //<-------- refactored routes ends here ------->
 
 router.get("/history", authMiddleware, transactionHistory);
