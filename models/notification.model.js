@@ -10,7 +10,8 @@ const NotificationSchema = new mongoose.Schema(
     body: { type: String, default: null, required: true },
     status: {
       type: String,
-      default: "not_seen",
+      enum: ["read", "unread"],
+      default: "unread",
       required: true,
     },
   },

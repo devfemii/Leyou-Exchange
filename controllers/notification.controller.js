@@ -1,14 +1,22 @@
-const { getNotificationsByUserId } = require("../services/notification.service");
-const { sendSuccessMessage } = require("../utils");
 const User = require("../models/user.model");
+const Notification = require("../models/notification.model");
+const { sendSuccessMessage } = require("../utils");
 
 const getNotifications = async (req, res) => {
+  const userId = req.decoded.id;
   try {
-    const notifications = await getNotificationsByUserId({
-      userId: req.decoded.id,
-    });
-
-    return res.status(201).json(sendSuccessMessage(notifications, 201));
+    const notifications = await Notification.find({ userId });
+    const unreadNotifications = notifications.filter((notification) => notification.status === "unread");
+    return res.status(201).json(
+      sendSuccessMessage(
+        {
+          totalNotifications: notifications.length,
+          totalUnreadNotifications: unreadNotifications.length,
+          notifications,
+        },
+        201
+      )
+    );
   } catch (error) {
     throw new Error(error);
   }

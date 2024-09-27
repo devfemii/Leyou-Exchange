@@ -9,6 +9,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const tempDir = path.resolve("data", "temp");
+//<---------- check if the temp folder exist or create another -------->
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
 }
