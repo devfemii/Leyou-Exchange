@@ -1,3 +1,4 @@
+const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../errors");
 const { sendCodeToEmail, verifyCodeFromEmail } = require("../services/auth.service");
 const {
@@ -27,9 +28,12 @@ const tradeGiftCard = async (req, res) => {
     );
 
     return res
-      .status(200)
+      .status(StatusCodes.CREATED)
       .json(
-        sendSuccessMessage("Your gift card transaction is now processing. We wll notify you shortly", 200)
+        sendSuccessMessage(
+          "Your gift card transaction is now processing. We wll notify you shortly",
+          StatusCodes.CREATED
+        )
       );
   } catch (error) {
     throw new Error(error);
